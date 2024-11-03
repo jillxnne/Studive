@@ -154,29 +154,29 @@ public class GUI extends PApplet {
         //afegir boto Recomendaciones
     }
 
-    public void drawStatisticGenInfo(PApplet p5){
+    public void drawStatisticGenInfo(PApplet p5) {
 
         //STATISTICS
         p5.fill(255);
-        p5.rect(300,170,500,400);
+        p5.rect(300, 170, 500, 400);
 
         // INFO
-        p5.fill(238,169,144);
-        p5.rect(250, 580, StatisticGenBoardwidth,StatisticGenBoardheight,25);
+        p5.fill(238, 169, 144);
+        p5.rect(250, 580, StatisticGenBoardwidth, StatisticGenBoardheight, 25);
         p5.fill(0);
         p5.textSize(SubtitleSize);
-        p5.text("ERRORES: ", StatisticGenBoardwidth-300,StatisticGenBoardheight+330);
+        p5.text("ERRORES: ", StatisticGenBoardwidth - 300, StatisticGenBoardheight + 330);
         // afegir boto Errores
         p5.textSize(SubtitleSize);
-        p5.text("RECOMENDACIONES: ", StatisticGenBoardwidth-300,StatisticGenBoardheight+460);
+        p5.text("RECOMENDACIONES: ", StatisticGenBoardwidth - 300, StatisticGenBoardheight + 460);
         //afegir boto Recomendaciones
 
         int spacing = 20;
         for (int i = 0; i < 4; i++) {
             float x = 900; // Posición en x para alinearlos a la derecha con margen de 10
             float y = 160 + i * (170 + spacing); // Posición en y con espacio entre rectángulos
-            p5.fill(170,111,115);
-            p5.rect(x, y, RecentLecturewidth+300, RecentLectureheight+30,25);
+            p5.fill(170, 111, 115);
+            p5.rect(x, y, RecentLecturewidth + 300, RecentLectureheight + 30, 25);
         }
     }
 
