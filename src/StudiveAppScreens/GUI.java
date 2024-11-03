@@ -169,7 +169,7 @@ public class GUI extends PApplet {
         // afegir boto Errores
         p5.textSize(SubtitleSize);
         p5.text("RECOMENDACIONES: ", StatisticGenBoardwidth - 300, StatisticGenBoardheight + 460);
-        //afegir boto Recomendaciones
+        //afegir boto Recomendaciones és un text field
 
         int spacing = 20;
         for (int i = 0; i < 4; i++) {
