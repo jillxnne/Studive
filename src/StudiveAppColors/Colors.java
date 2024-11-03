@@ -41,7 +41,6 @@ public class Colors {
 
     void displayColors(PApplet p5, float x, float y, float w){
         p5.pushStyle();
-        //Llegenda
         p5.fill(0); p5.textAlign(p5.LEFT); p5.textSize(36);
         p5.text("Colors:", x, y-10);
 

@@ -18,7 +18,7 @@ public class Fonts {
         this.fonts = new PFont[3];
         this.fonts[0] = p5.createFont("data/Griffiths.otf", TitleSize);
         this.fonts[1] = p5.createFont("data/NostalgicWhispers.ttf", SubtitleSize);
-        this.fonts[2] = p5.createFont("data/Stalysta.ttf", ParagraphSize);
+        this.fonts[2] = p5.createFont("data/SimpleDay.otf", ParagraphSize);
     }
     int getNumFonts(){
         return this.fonts.length;
