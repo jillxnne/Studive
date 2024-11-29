@@ -61,6 +61,7 @@ public class Studive extends PApplet {
         }
 
         gui.Lection.isPressed(this);
+        gui.mainPageCard.checkCardSelection(this);
     }
 
 

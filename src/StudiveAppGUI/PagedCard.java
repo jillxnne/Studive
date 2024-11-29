@@ -7,20 +7,15 @@ public class PagedCard {
     Card[] cards;            // Cards
     int numCards;            // Número total de Cards
     int numCardsPage;        // Número de Cards en 1 Pàgina
-
     int numPage;
     int numTotalPages;
-
     float x, y, w, h;
     int selectedCard = -1;
 
-    // Constructor
     public PagedCard(int ncp) {
         this.numCardsPage = ncp;
         this.numPage = 0;
     }
-
-    // Setters
 
     public void setDimensions(float x, float y, float w, float h) {
         this.x = x;
@@ -35,11 +30,8 @@ public class PagedCard {
     }
 
     public void setCards() {
-
         cards = new Card[this.cardsData.length];
-
         for (int np=0; np<=numTotalPages; np++) {
-
             int firstCardPage = numCardsPage*np;
             int lastCardPage  = numCardsPage*(np+1) - 1;
             float hCard = h / (float) numCardsPage;
@@ -56,14 +48,12 @@ public class PagedCard {
         }
     }
 
-    public void setImages(PImage img1, PImage img2) {
-        PImage img;
+    public void setImages(PImage img1) {
+        PImage img = null;
         for (int i=0; i<cards.length; i++) {
             if (cards[i]!=null) {
                 if (cards[i].section=="Secció 1") {
                     img = img1;
-                } else {
-                    img = img2;
                 }
                 cards[i].setImage(img);
             }
@@ -92,7 +82,7 @@ public class PagedCard {
         int lastCardPage  = numCardsPage*(numPage+1) - 1;
         for (int i = firstCardPage; i <= lastCardPage; i++) {
             if (i<cards.length && cards[i]!=null) {
-                cards[i].display(p5, i==this.selectedCard);
+                cards[i].display(p5);
             }
         }
 
@@ -121,7 +111,6 @@ public class PagedCard {
     }
 
     public boolean checkMouseOver(PApplet p5){
-
         int firstCardPage = numCardsPage*numPage;
         int lastCardPage  = numCardsPage*(numPage+1) - 1;
         for (int i = firstCardPage; i <= lastCardPage; i++) {
@@ -132,15 +121,4 @@ public class PagedCard {
         return false;
     }
 
-    public void printSelectedCard(PApplet p5){
-        if(selectedCard !=-1){
-            Card cSelected = cards[selectedCard];
-            p5.pushStyle();
-            p5.fill(0); p5.textSize(18);
-            p5.text("Seleccionada: ", 900, 300);
-            p5.textSize(24);
-            p5.text(cSelected.title, 900, 340);
-            p5.popStyle();
-        }
-    }
 }

@@ -10,7 +10,6 @@ import StudiveAppGUI.ImageButtons;
 import StudiveAppGUI.TextArea;
 import processing.core.PApplet;
 import processing.core.PImage;
-import static StudiveAppGUI.PagedCard.*;
 import javax.swing.*;
 
 public class GUI extends PApplet {
@@ -22,6 +21,18 @@ public class GUI extends PApplet {
     TextArea Lection, Results, GenRecomendations, Errors, Recomendation;
     Checkbox c1, c2;
     PagedCard mainPageCard, mainPageLection;
+    String[][] info = {
+            {"Títol 1", "Lloc 1", "Data 1", "Secció 1", "Descripció 1"},
+            {"Títol 2", "Lloc 2", "Data 2", "Secció 2", "Descripció 2"},
+            {"Títol 3", "Lloc 3", "Data 3", "Secció 1", "Descripció 3"},
+            {"Títol 4", "Lloc 4", "Data 4", "Secció 1", "Descripció 4"},
+            {"Títol 5", "Lloc 5", "Data 5", "Secció 2", "Descripció 5"},
+            {"Títol 6", "Lloc 6", "Data 6", "Secció 2", "Descripció 6"},
+            {"Títol 7", "Lloc 7", "Data 7", "Secció 1", "Descripció 7"},
+            {"Títol 8", "Lloc 8", "Data 8", "Secció 8", "Descripció 8"},
+            {"Títol 9", "Lloc 9", "Data 9", "Secció 9", "Descripció 9"},
+            {"Títol 0", "Lloc 0", "Data 0", "Secció 0", "Descripció 0"},
+    };
 
     public GUI(PApplet p5){
        Default  = SCREENS.HOMEPAGE;
@@ -30,11 +41,16 @@ public class GUI extends PApplet {
        setButtons(p5);
        setTextFields(p5);
        setCheckBoxs(p5);
+       setPagedCards();
     }
 
-    public void setPagedCards(PApplet p5){
-        mainPageCard = new PagedCard();
-        mainPageLection = new PagedCard();
+    public void setPagedCards(){
+        mainPageCard = new PagedCard(5);
+        mainPageCard.setDimensions(IDwidth +250,205, RecentLecturewidth, RecentLectureheight);
+        mainPageCard.setCards();
+        mainPageCard.setData(info);
+        mainPageCard.setImages(homeIcon);
+        // mainPageLection = new PagedCard();
     }
 
     public void setCheckBoxs(PApplet p5){
@@ -68,6 +84,7 @@ public class GUI extends PApplet {
         drawmainBar(p5);
         drawID(p5);
         drawRecentLecturesList(p5);
+        mainPageCard.display(p5);
     }
 
     public void drawGeneralLessons(PApplet p5){
@@ -132,12 +149,6 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(TitleSize);
         p5.text("LECCIONES RECIENTES", IDwidth + 250, 150);
-        for (int i = 0; i < 5; i++) {
-            float x = IDwidth +250; // Posición en x para alinearlos a la derecha con margen de 10
-            float y = 180 + i * (125 + spacing); // Posición en y con espacio entre rectángulos
-            p5.fill(170,111,115);
-            p5.rect(x, y, RecentLecturewidth, RecentLectureheight,25);
-        }
     }
 
     public void drawLecturesList(PApplet p5){
