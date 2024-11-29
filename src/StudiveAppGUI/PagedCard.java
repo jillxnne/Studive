@@ -76,8 +76,6 @@ public class PagedCard {
     public void display(PApplet p5) {
 
         p5.pushStyle();
-
-        // Dibuixa Cards corresponent a la Pàgina
         int firstCardPage = numCardsPage*numPage;
         int lastCardPage  = numCardsPage*(numPage+1) - 1;
         for (int i = firstCardPage; i <= lastCardPage; i++) {

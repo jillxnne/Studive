@@ -34,7 +34,6 @@ public class PagedCardTest extends PApplet {
     }
 
     public void setup(){
-
         // Imatges de les Categories
         img1 = loadImage("folder.png");
 

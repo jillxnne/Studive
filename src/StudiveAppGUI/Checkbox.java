@@ -14,11 +14,9 @@ public class Checkbox{
         this.borderColor = p5.color(0);
         this.checkedColor = p5.color(180);
     }
-
     public boolean isChecked(){
         return  this.checked;
     }
-
     public void display(PApplet p5){
         p5.pushStyle();
         p5.stroke(borderColor);

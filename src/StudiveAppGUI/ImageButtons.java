@@ -17,7 +17,6 @@ public class ImageButtons {
         this.r = r;
 
     }
-
     public void display(PApplet p5){
         p5.pushStyle();
         if(mouseOverButton(p5)){
@@ -30,7 +29,6 @@ public class ImageButtons {
         }
         p5.popStyle();
     }
-
     public boolean mouseOverButton(PApplet p5){
         return p5.dist(p5.mouseX, p5.mouseY, this.x, this.y)<= this.r;
     }

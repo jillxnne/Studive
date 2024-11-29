@@ -54,15 +54,11 @@ public class Studive extends PApplet {
             gui.Default = SCREENS.MAINSTATISTICS;
         }
     }
-
     public void mousePressed(){
         if(gui.c1.onMouseOver(this)){
             gui.c1.toggle();
         }
 
         gui.Lection.isPressed(this);
-        gui.mainPageCard.checkCardSelection(this);
     }
-
-
 }

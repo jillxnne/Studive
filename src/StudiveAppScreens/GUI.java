@@ -35,16 +35,15 @@ public class GUI extends PApplet {
     };
 
     public GUI(PApplet p5){
-       Default  = SCREENS.HOMEPAGE;
+        Default  = SCREENS.HOMEPAGE;
 
-       this.setImage(p5);
-       setButtons(p5);
-       setTextFields(p5);
-       setCheckBoxs(p5);
-       setPagedCards();
+        this.setImage(p5);
+        setButtons(p5);
+        setTextFields(p5);
+        setCheckBoxs(p5);
     }
 
-    public void setPagedCards(){
+   /* public void setPagedCards(){
         mainPageCard = new PagedCard(5);
         mainPageCard.setDimensions(IDwidth +250,205, RecentLecturewidth, RecentLectureheight);
         mainPageCard.setCards();
@@ -52,6 +51,8 @@ public class GUI extends PApplet {
         mainPageCard.setImages(homeIcon);
         // mainPageLection = new PagedCard();
     }
+
+    */
 
     public void setCheckBoxs(PApplet p5){
         c1 = new Checkbox(p5, 30,30,30);
@@ -84,7 +85,6 @@ public class GUI extends PApplet {
         drawmainBar(p5);
         drawID(p5);
         drawRecentLecturesList(p5);
-        mainPageCard.display(p5);
     }
 
     public void drawGeneralLessons(PApplet p5){
@@ -124,10 +124,10 @@ public class GUI extends PApplet {
         p5.fill(102,84,94);
         p5.rect(0,FullScreenheight-150,MainBarwidth,MainBarheight);
 
-       home.display(p5);
-       foldermainbar.display(p5);
-       plus.display(p5);
-       statistic.display(p5);
+        home.display(p5);
+        foldermainbar.display(p5);
+        plus.display(p5);
+        statistic.display(p5);
 
     }
 
@@ -152,7 +152,7 @@ public class GUI extends PApplet {
     }
 
     public void drawLecturesList(PApplet p5){
-       int spacing = 20;
+        int spacing = 20;
         for (int i = 0; i < 4; i++) {
             float x = 535; // Posición en x para alinearlos a la derecha con margen de 10
             float y = 160 + i * (170 + spacing); // Posición en y con espacio entre rectángulos
