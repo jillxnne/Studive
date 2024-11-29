@@ -8,7 +8,7 @@ public class Card {
     String section;
     String description;
 
-    // Dimensions
+    //
     float x, y, w, h, b;
 
     // Constructors
