@@ -4,8 +4,6 @@ import processing.core.PApplet;
 import static StudiveAppScreens.GUI.*;
 
 public class Studive extends PApplet {
-
-    // Interfície Gràfica (Pantalles i components)
     GUI gui;
 
     public static void main(String[] args) {
@@ -13,13 +11,13 @@ public class Studive extends PApplet {
     }
 
     public void settings() {
-        size(1920, 1080);        // Pantalla HD
+        size(1920, 1080);
         smooth(10);
     }
 
     public void setup() {
-        background(255); // Fondo negro
-        gui = new GUI();                   // Constructor de la GUI
+        background(255);
+        gui = new GUI(this);
 
     }
 
@@ -36,9 +34,10 @@ public class Studive extends PApplet {
             case MAINSTATISTICS:   gui.drawMainStatistics(this);
                 break;
         }
-
     }
     public void keyPressed(){
+        gui.Lection.keyPressed(key,keyCode);
+
         if(key=='0'){
             gui.Default = SCREENS.HOMEPAGE;
         }
@@ -48,6 +47,21 @@ public class Studive extends PApplet {
         else if(key=='2'){
             gui.Default = SCREENS.MAINLESSONS;
         }
-
+        else if(key=='3'){
+            gui.Default = SCREENS.GENERALSTATISTICS;
+        }
+        else if(key=='4'){
+            gui.Default = SCREENS.MAINSTATISTICS;
+        }
     }
+
+    public void mousePressed(){
+        if(gui.c1.onMouseOver(this)){
+            gui.c1.toggle();
+        }
+
+        gui.Lection.isPressed(this);
+    }
+
+
 }
