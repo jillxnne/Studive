@@ -18,9 +18,9 @@ public class Button {
         this.w = w;
         this.h = h;
         this.enabled = true;
-        this.fillColor = p5.color(155, 55, 155);
-        this.fillColorOver = p5.color(255, 55, 155);
-        this.fillColorDisabled = p5.color(150);
+        this.fillColor = p5.color(170,111,115);
+        this.fillColorOver = p5.color(238,169,144);
+        this.fillColorDisabled = p5.color(170,111,115);
         this.strokeColor = p5.color(0);
     }
 

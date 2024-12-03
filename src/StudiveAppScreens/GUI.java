@@ -3,6 +3,9 @@ import StudiveAppFonts.Fonts;
 import StudiveAppGUI.Checkbox;
 import StudiveAppGUI.PagedCard;
 import StudiveAppGUI.Button;
+import StudiveAppGUI.BarsDiagram;
+import StudiveAppGUI.SelectButton;
+import StudiveAppGUI.PopUp;
 import processing.core.PApplet;
 import static StudiveAppLayout.Layout.*;
 import static StudiveAppFonts.Fonts.*;
@@ -22,7 +25,11 @@ public class GUI extends PApplet {
     TextArea Lection, Results, GenRecomendations, Errors, Recomendation;
     Checkbox done, notDone;
     PagedCard mainPageCard, mainPageLection, mainPageStat;
-    Button mainNext, mainPrev, lectNext, lectPrev, statNext, statPrev;
+    Button lectNext, lectPrev, statNext, statPrev, newTest, accessResults;
+    BarsDiagram genDiagram, mainDiagram;
+    SelectButton typeOfLection;
+    PopUp plusFunctions, lessonFunctions;
+
     String[][] info = {
             {"Títol 1", "Lloc 1"},
             {"Títol 2", "Lloc 2"},
@@ -36,26 +43,52 @@ public class GUI extends PApplet {
             {"Títol 0", "Lloc 0"},
     };
 
+    String[] text = {"CAS", "TOK", "MN"};
+    float[] values = {200, 450, 375};
+    int[] colors = {color(0), color(255,255,255), color(100,100,100)};
+    String[] lectionType = {"PDF", "TEST"};
+
     public GUI(PApplet p5){
         Default  = SCREENS.HOMEPAGE;
 
         this.setImage(p5);
-        setButtons(p5);
+        setImageButtons(p5);
         setTextFields(p5);
         setCheckBoxs(p5);
         setPageButtons(p5);
         setPagedCards();
+        setBarsDiagrams();
+        setAccessButtons(p5);
+        setSelectButtons();
     }
 
+    public void setPopUps(){
+
+    }
+    public void setSelectButtons(){
+        typeOfLection = new SelectButton(lectionType,PanelBoardwidth+310, PanelBoardheight-400,400,30);
+    }
+    public void setBarsDiagrams(){
+        genDiagram = new BarsDiagram(300,100, 500,400);
+        genDiagram.setColors(colors);
+        genDiagram.setValues(values);
+        genDiagram.setTexts(text);
+
+        mainDiagram = new BarsDiagram(300,170,500,500);
+        mainDiagram.setColors(colors);
+        mainDiagram.setValues(values);
+        mainDiagram.setTexts(text);
+    }
     public void setPageButtons(PApplet p5){
-        mainNext = new Button(this, "NEXT", 1800, 220, 60, 60);
-        mainPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
         lectNext = new Button(this, "NEXT", 1800, 220, 60, 60);
         lectPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
         statNext = new Button(this, "NEXT", 1800, 220, 60, 60);
         statPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
     }
-
+    public void setAccessButtons(PApplet p5){
+        accessResults = new Button(p5, "ACCESS RESULTS",360, 680,500,50);
+        newTest = new Button(p5, "MAKE NEW TEST", 340, 780, 400, 50);
+    }
     public void setPagedCards(){
         mainPageCard = new PagedCard(5);
         mainPageCard.setDimensions(IDwidth +200,180, RecentLecturewidth+100, 625);
@@ -75,22 +108,19 @@ public class GUI extends PApplet {
         mainPageStat.setCards();
         mainPageStat.setImages(homeIcon);
     }
-
     public void setCheckBoxs(PApplet p5){
         done = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+25,30);
         notDone = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+75,30);
     }
-
     public void setTextFields(PApplet p5){
         Lection = new TextArea(p5, (int)PanelBoardwidth+313, (int)PanelBoardheight-320, 500,290, 45,13);
     }
-    public void setButtons(PApplet p5){
+    public void setImageButtons(PApplet p5){
         home = new ImageButtons(p5, homeIcon,homepressedIcon, 650,990,30);
         foldermainbar = new ImageButtons(p5, homefolderIcon,homefolderpressedIcon,850, 990,30);
         plus = new ImageButtons(p5,plusIcon, pluspressedIcon,1050,990,30);
         statistic = new ImageButtons(p5,statisticIcon, statisticpressedIcon,1250,990,30);
     }
-
     public void setImage(PApplet p5){
         homeIcon = p5.loadImage("data/home.png");
         homepressedIcon = p5.loadImage("data/homepressed.png");
@@ -108,8 +138,6 @@ public class GUI extends PApplet {
         drawID(p5);
         drawRecentLecturesList(p5);
         mainPageCard.display(p5);
-        mainNext.display(p5);
-        mainPrev.display(p5);
     }
 
     public void drawGeneralLessons(PApplet p5){
@@ -129,6 +157,8 @@ public class GUI extends PApplet {
         Lection.display(p5);
         done.display(p5);
         notDone.display(p5);
+        accessResults.display(p5);
+        typeOfLection.display(p5);
     }
 
     public void drawGeneralStatistics(PApplet p5){
@@ -139,6 +169,7 @@ public class GUI extends PApplet {
         mainPageStat.display(p5);
         statNext.display(p5);
         statPrev.display(p5);
+        genDiagram.display(p5);
     }
 
     public void drawMainStatistics(PApplet p5){
@@ -146,7 +177,8 @@ public class GUI extends PApplet {
         drawmainBar(p5);
         drawUpperSign(p5);
         drawStatisticMainInfo(p5);
-
+        mainDiagram.display(p5);
+        newTest.display(p5);
     }
 
     public void drawmainBar(PApplet p5){
@@ -177,8 +209,6 @@ public class GUI extends PApplet {
         p5.textSize(TitleSize);
         p5.text("LECCIONES RECIENTES", IDwidth + 250, 150);
     }
-
-
 
     public void drawUpperSign(PApplet p5){
         p5.fill(255);
@@ -224,10 +254,6 @@ public class GUI extends PApplet {
         p5.textSize(MidTitleSize);
         p5.text("NOMBRE XXX", 500, 260);
 
-        //STATISTICS
-        p5.fill(255);
-        p5.rect(300,350,500,500);
-
         // INFO
         p5.fill(238,169,144);
         p5.rect(1000, 200, StatisticMainBoardwidth,StatisticMainBoardheight,25);
@@ -241,10 +267,6 @@ public class GUI extends PApplet {
     }
 
     public void drawStatisticGenInfo(PApplet p5) {
-        //STATISTICS
-        p5.fill(255);
-        p5.rect(300, 170, 500, 400);
-
         // INFO
         p5.fill(238, 169, 144);
         p5.rect(250, 580, StatisticGenBoardwidth, StatisticGenBoardheight, 25);

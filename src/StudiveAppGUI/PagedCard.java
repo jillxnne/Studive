@@ -83,7 +83,6 @@ public class PagedCard {
                 cards[i].display(p5);
             }
         }
-
         p5.popStyle();
     }
 
