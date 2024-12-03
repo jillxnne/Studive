@@ -2,6 +2,7 @@ package StudiveAppScreens;
 import StudiveAppFonts.Fonts;
 import StudiveAppGUI.Checkbox;
 import StudiveAppGUI.PagedCard;
+import StudiveAppGUI.Button;
 import processing.core.PApplet;
 import static StudiveAppLayout.Layout.*;
 import static StudiveAppFonts.Fonts.*;
@@ -19,19 +20,20 @@ public class GUI extends PApplet {
     PImage homeIcon,homepressedIcon, homefolderIcon, homefolderpressedIcon, plusIcon,
             pluspressedIcon, statisticIcon, statisticpressedIcon, mainfolderIcon;
     TextArea Lection, Results, GenRecomendations, Errors, Recomendation;
-    Checkbox c1, c2;
-    PagedCard mainPageCard, mainPageLection;
+    Checkbox done, notDone;
+    PagedCard mainPageCard, mainPageLection, mainPageStat;
+    Button mainNext, mainPrev, lectNext, lectPrev, statNext, statPrev;
     String[][] info = {
-            {"Títol 1", "Lloc 1", "Data 1", "Secció 1", "Descripció 1"},
-            {"Títol 2", "Lloc 2", "Data 2", "Secció 2", "Descripció 2"},
-            {"Títol 3", "Lloc 3", "Data 3", "Secció 1", "Descripció 3"},
-            {"Títol 4", "Lloc 4", "Data 4", "Secció 1", "Descripció 4"},
-            {"Títol 5", "Lloc 5", "Data 5", "Secció 2", "Descripció 5"},
-            {"Títol 6", "Lloc 6", "Data 6", "Secció 2", "Descripció 6"},
-            {"Títol 7", "Lloc 7", "Data 7", "Secció 1", "Descripció 7"},
-            {"Títol 8", "Lloc 8", "Data 8", "Secció 8", "Descripció 8"},
-            {"Títol 9", "Lloc 9", "Data 9", "Secció 9", "Descripció 9"},
-            {"Títol 0", "Lloc 0", "Data 0", "Secció 0", "Descripció 0"},
+            {"Títol 1", "Lloc 1"},
+            {"Títol 2", "Lloc 2"},
+            {"Títol 3", "Lloc 3"},
+            {"Títol 4", "Lloc 4"},
+            {"Títol 5", "Lloc 5"},
+            {"Títol 6", "Lloc 6"},
+            {"Títol 7", "Lloc 7"},
+            {"Títol 8", "Lloc 8"},
+            {"Títol 9", "Lloc 9"},
+            {"Títol 0", "Lloc 0"},
     };
 
     public GUI(PApplet p5){
@@ -41,22 +43,42 @@ public class GUI extends PApplet {
         setButtons(p5);
         setTextFields(p5);
         setCheckBoxs(p5);
+        setPageButtons(p5);
+        setPagedCards();
     }
 
-   /* public void setPagedCards(){
+    public void setPageButtons(PApplet p5){
+        mainNext = new Button(this, "NEXT", 1800, 220, 60, 60);
+        mainPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
+        lectNext = new Button(this, "NEXT", 1800, 220, 60, 60);
+        lectPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
+        statNext = new Button(this, "NEXT", 1800, 220, 60, 60);
+        statPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
+    }
+
+    public void setPagedCards(){
         mainPageCard = new PagedCard(5);
-        mainPageCard.setDimensions(IDwidth +250,205, RecentLecturewidth, RecentLectureheight);
-        mainPageCard.setCards();
+        mainPageCard.setDimensions(IDwidth +200,180, RecentLecturewidth+100, 625);
         mainPageCard.setData(info);
+        mainPageCard.setCards();
         mainPageCard.setImages(homeIcon);
-        // mainPageLection = new PagedCard();
-    }
 
-    */
+        mainPageLection = new PagedCard(4);
+        mainPageLection.setDimensions(535,160, RecentLecturewidth+300, 700);
+        mainPageLection.setData(info);
+        mainPageLection.setCards();
+        mainPageLection.setImages(homeIcon);
+
+        mainPageStat = new PagedCard(5);
+        mainPageStat.setDimensions(900,180, RecentLecturewidth+120, 625);
+        mainPageStat.setData(info);
+        mainPageStat.setCards();
+        mainPageStat.setImages(homeIcon);
+    }
 
     public void setCheckBoxs(PApplet p5){
-        c1 = new Checkbox(p5, 30,30,30);
-        c2 = new Checkbox(p5, 20,20,20);
+        done = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+25,30);
+        notDone = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+75,30);
     }
 
     public void setTextFields(PApplet p5){
@@ -85,14 +107,18 @@ public class GUI extends PApplet {
         drawmainBar(p5);
         drawID(p5);
         drawRecentLecturesList(p5);
+        mainPageCard.display(p5);
+        mainNext.display(p5);
+        mainPrev.display(p5);
     }
 
     public void drawGeneralLessons(PApplet p5){
         p5.background(246,224,181);
-        Lection.display(p5);
         drawmainBar(p5);
-        drawLecturesList(p5);
         drawUpperSign(p5);
+        mainPageLection.display(p5);
+        lectNext.display(p5);
+        lectPrev.display(p5);
     }
 
     public void drawMainLessons(PApplet p5){
@@ -101,7 +127,8 @@ public class GUI extends PApplet {
         drawUpperSign(p5);
         drawLectureInfo(p5);
         Lection.display(p5);
-        c1.display(p5);
+        done.display(p5);
+        notDone.display(p5);
     }
 
     public void drawGeneralStatistics(PApplet p5){
@@ -109,7 +136,9 @@ public class GUI extends PApplet {
         drawmainBar(p5);
         drawUpperSign(p5);
         drawStatisticGenInfo(p5);
-
+        mainPageStat.display(p5);
+        statNext.display(p5);
+        statPrev.display(p5);
     }
 
     public void drawMainStatistics(PApplet p5){
@@ -145,21 +174,11 @@ public class GUI extends PApplet {
     }
 
     public void drawRecentLecturesList(PApplet p5) {
-        int spacing = 20;
-        p5.fill(0);
         p5.textSize(TitleSize);
         p5.text("LECCIONES RECIENTES", IDwidth + 250, 150);
     }
 
-    public void drawLecturesList(PApplet p5){
-        int spacing = 20;
-        for (int i = 0; i < 4; i++) {
-            float x = 535; // Posición en x para alinearlos a la derecha con margen de 10
-            float y = 160 + i * (170 + spacing); // Posición en y con espacio entre rectángulos
-            p5.fill(170,111,115);
-            p5.rect(x, y, RecentLecturewidth+300, RecentLectureheight+30,25);
-        }
-    }
+
 
     public void drawUpperSign(PApplet p5){
         p5.fill(255);
@@ -222,7 +241,6 @@ public class GUI extends PApplet {
     }
 
     public void drawStatisticGenInfo(PApplet p5) {
-
         //STATISTICS
         p5.fill(255);
         p5.rect(300, 170, 500, 400);
@@ -237,14 +255,5 @@ public class GUI extends PApplet {
         p5.textSize(SubtitleSize);
         p5.text("RECOMENDACIONES: ", StatisticGenBoardwidth - 300, StatisticGenBoardheight + 460);
         //afegir boto Recomendaciones és un text field
-
-        int spacing = 20;
-        for (int i = 0; i < 4; i++) {
-            float x = 900; // Posición en x para alinearlos a la derecha con margen de 10
-            float y = 160 + i * (170 + spacing); // Posición en y con espacio entre rectángulos
-            p5.fill(170, 111, 115);
-            p5.rect(x, y, RecentLecturewidth + 300, RecentLectureheight + 30, 25);
-        }
     }
-
 }

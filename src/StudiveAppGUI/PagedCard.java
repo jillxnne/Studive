@@ -84,10 +84,6 @@ public class PagedCard {
             }
         }
 
-        // Informació de la Pàgina
-        p5.fill(0);
-        p5.text("Pag: "+(this.numPage+1)+" / "+(this.numTotalPages+1), x + w + 50, y+10);
-
         p5.popStyle();
     }
 

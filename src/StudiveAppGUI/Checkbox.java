@@ -2,10 +2,10 @@ package StudiveAppGUI;
 import processing.core.PApplet;
 
 public class Checkbox{
-    int x, y, w;
+    float x, y, w;
     int bgColor, borderColor, checkedColor;
     boolean checked;
-    public Checkbox(PApplet p5, int x, int y, int w){
+    public Checkbox(PApplet p5, float x, float y, float w){
         this.x = x;
         this.y = y;
         this.w = w;
