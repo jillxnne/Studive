@@ -32,8 +32,4 @@ public class ImageButtons {
     public boolean mouseOverButton(PApplet p5){
         return p5.dist(p5.mouseX, p5.mouseY, this.x, this.y)<= this.r;
     }
-    public boolean updateHandCursor(PApplet p5){
-        return mouseOverButton(p5);
-    }
-
 }

@@ -6,6 +6,7 @@ import StudiveAppGUI.Button;
 import StudiveAppGUI.BarsDiagram;
 import StudiveAppGUI.SelectButton;
 import StudiveAppGUI.PopUp;
+import jogamp.graph.font.typecast.ot.table.ID;
 import processing.core.PApplet;
 import static StudiveAppLayout.Layout.*;
 import static StudiveAppFonts.Fonts.*;
@@ -19,7 +20,7 @@ import javax.swing.*;
 public class GUI extends PApplet {
     public enum SCREENS {HOMEPAGE, GENERALLESSONS, MAINLESSONS, GENERALSTATISTICS, MAINSTATISTICS};
     public SCREENS Default;
-    ImageButtons home, foldermainbar, plus, statistic, mainfolder;
+    ImageButtons home, foldermainbar, plus, statistic, mainfolder1, mainforlder2;
     PImage homeIcon,homepressedIcon, homefolderIcon, homefolderpressedIcon, plusIcon,
             pluspressedIcon, statisticIcon, statisticpressedIcon, mainfolderIcon;
     TextArea Lection, Results, GenRecomendations, Errors, Recomendation;
@@ -60,11 +61,17 @@ public class GUI extends PApplet {
         setBarsDiagrams();
         setAccessButtons(p5);
         setSelectButtons();
+        setPopUps(p5);
     }
 
-    public void setPopUps(){
+    public void setPopUps(PApplet p5){
+        plusFunctions = new PopUp(p5, 100, 100, 800, 340);
+        plusFunctions.setTextButtons("PDF", "FLASHCARDS", "TEST");
 
+        lessonFunctions = new PopUp(p5,100,100,800,340);
+        lessonFunctions.setTextButtons("SHARE", "EDIT", "CHANGE LOCATION");
     }
+
     public void setSelectButtons(){
         typeOfLection = new SelectButton(lectionType,PanelBoardwidth+310, PanelBoardheight-400,400,30);
     }
@@ -80,7 +87,7 @@ public class GUI extends PApplet {
         mainDiagram.setTexts(text);
     }
     public void setPageButtons(PApplet p5){
-        lectNext = new Button(this, "NEXT", 1800, 220, 60, 60);
+        lectNext = new Button(this, "NEXT", IDwidth+350, 165, 60, 60);
         lectPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
         statNext = new Button(this, "NEXT", 1800, 220, 60, 60);
         statPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
@@ -120,6 +127,8 @@ public class GUI extends PApplet {
         foldermainbar = new ImageButtons(p5, homefolderIcon,homefolderpressedIcon,850, 990,30);
         plus = new ImageButtons(p5,plusIcon, pluspressedIcon,1050,990,30);
         statistic = new ImageButtons(p5,statisticIcon, statisticpressedIcon,1250,990,30);
+        mainfolder1 = new ImageButtons(p5, homefolderIcon, homefolderpressedIcon, 350, 720,180);
+        mainforlder2 = new ImageButtons(p5, homefolderIcon, homefolderpressedIcon, 850, 720, 180);
     }
     public void setImage(PApplet p5){
         homeIcon = p5.loadImage("data/home.png");
@@ -138,6 +147,8 @@ public class GUI extends PApplet {
         drawID(p5);
         drawRecentLecturesList(p5);
         mainPageCard.display(p5);
+        mainfolder1.display(p5);
+        mainforlder2.display(p5);
     }
 
     public void drawGeneralLessons(PApplet p5){
@@ -166,10 +177,10 @@ public class GUI extends PApplet {
         drawmainBar(p5);
         drawUpperSign(p5);
         drawStatisticGenInfo(p5);
-        mainPageStat.display(p5);
         statNext.display(p5);
         statPrev.display(p5);
         genDiagram.display(p5);
+        mainPageStat.display(p5);
     }
 
     public void drawMainStatistics(PApplet p5){
@@ -189,7 +200,6 @@ public class GUI extends PApplet {
         foldermainbar.display(p5);
         plus.display(p5);
         statistic.display(p5);
-
     }
 
     public void drawID(PApplet p5){

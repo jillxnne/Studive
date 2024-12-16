@@ -87,7 +87,6 @@ public class PagedCard {
     }
 
     public void checkCardSelection(PApplet p5){
-
         boolean selected = false;
         int firstCardPage = numCardsPage*numPage;
         int lastCardPage  = numCardsPage*(numPage+1) - 1;
@@ -110,6 +109,13 @@ public class PagedCard {
             if (i<cards.length && cards[i]!=null && cards[i].mouseOver(p5)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean printSelectedCard(){
+        if(selectedCard !=-1){
+            Card cSelected = cards[selectedCard];
         }
         return false;
     }
