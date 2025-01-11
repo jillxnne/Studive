@@ -9,11 +9,6 @@ public class PopUpTest extends PApplet {
 
     // Tria de 3 opcions
     PopUp c;
-
-
-
-
-
     // Color de fons
     int bgColor;
 
@@ -45,18 +40,14 @@ public class PopUpTest extends PApplet {
     }
 
     public void mousePressed(){
-
         if(c.b1.mouseOverButton(this) && c.b1.isEnabled()){
             c.setVisible(false);
-            bgColor = color(255, 0, 0);
         }
         else if(c.b2.mouseOverButton(this) && c.b2.isEnabled()){
             c.setVisible(false);
-            bgColor = color(0, 255, 0);
         }
         else if(c.b3.mouseOverButton(this) && c.b3.isEnabled()){
             c.setVisible(false);
-            bgColor = color(0, 0, 255);
         }
         else {
             c.setVisible(true);

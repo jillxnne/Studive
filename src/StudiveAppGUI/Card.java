@@ -7,9 +7,6 @@ public class Card {
     String title, section;
     float x, y, w, h, b;
 
-    public Card(){
-    }
-
     public Card(String title, String section){
         this.title = title;
         this.section = section;
@@ -42,7 +39,7 @@ public class Card {
         else {
             p5.fill(170,111,115);
         }
-        p5.rect(x, y, w, h, b/2);
+        p5.rect(x, y, w, h, 20);
 
         // imatge descriptiva
         float imgW = (w/3) - 2*b;

@@ -71,8 +71,4 @@ public class Button {
                 (p5.mouseY >= this.y) && (p5.mouseY <= this.y + this.h);
     }
 
-    // Indica si cal posar el cursor a HAND
-    public boolean updateHandCursor(PApplet p5){
-        return mouseOverButton(p5) && enabled;
-    }
 }

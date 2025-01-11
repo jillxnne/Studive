@@ -23,7 +23,7 @@ public class GUI extends PApplet {
     ImageButtons home, foldermainbar, plus, statistic, mainfolder1, mainforlder2;
     PImage homeIcon,homepressedIcon, homefolderIcon, homefolderpressedIcon, plusIcon,
             pluspressedIcon, statisticIcon, statisticpressedIcon, mainfolderIcon;
-    TextArea Lection, Results, GenRecomendations, Errors, Recomendation;
+    TextArea Lection;
     Checkbox done, notDone;
     PagedCard mainPageCard, mainPageLection, mainPageStat;
     Button lectNext, lectPrev, statNext, statPrev, newTest, accessResults;
@@ -88,9 +88,9 @@ public class GUI extends PApplet {
     }
     public void setPageButtons(PApplet p5){
         lectNext = new Button(this, "NEXT", IDwidth+350, 165, 60, 60);
-        lectPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
-        statNext = new Button(this, "NEXT", 1800, 220, 60, 60);
-        statPrev = new Button(this, "PREV", 1800, 220 + 60, 60, 60);
+        lectPrev = new Button(this, "PREV", IDwidth+350, 820, 60, 60);
+        statNext = new Button(this, "NEXT", 1450, 860, 60, 60);
+        statPrev = new Button(this, "PREV", 1350, 860, 60, 60);
     }
     public void setAccessButtons(PApplet p5){
         accessResults = new Button(p5, "ACCESS RESULTS",360, 680,500,50);
@@ -143,53 +143,55 @@ public class GUI extends PApplet {
 
     public void drawHomePage(PApplet p5){
         p5.background(246,224,181);
-        drawmainBar(p5);
         drawID(p5);
         drawRecentLecturesList(p5);
         mainPageCard.display(p5);
         mainfolder1.display(p5);
         mainforlder2.display(p5);
+        drawmainBar(p5);
     }
 
     public void drawGeneralLessons(PApplet p5){
         p5.background(246,224,181);
-        drawmainBar(p5);
         drawUpperSign(p5);
         mainPageLection.display(p5);
         lectNext.display(p5);
         lectPrev.display(p5);
+        drawmainBar(p5);
     }
 
     public void drawMainLessons(PApplet p5){
         p5.background(246,224,181);
-        drawmainBar(p5);
         drawUpperSign(p5);
         drawLectureInfo(p5);
         Lection.display(p5);
         done.display(p5);
         notDone.display(p5);
-        accessResults.display(p5);
         typeOfLection.display(p5);
+        if (typeOfLection.getSelectedValue() == "TEST"){
+            accessResults.display(p5);
+        }
+        drawmainBar(p5);
     }
 
     public void drawGeneralStatistics(PApplet p5){
         p5.background(246,224,181);
-        drawmainBar(p5);
         drawUpperSign(p5);
         drawStatisticGenInfo(p5);
         statNext.display(p5);
         statPrev.display(p5);
         genDiagram.display(p5);
         mainPageStat.display(p5);
+        drawmainBar(p5);
     }
 
     public void drawMainStatistics(PApplet p5){
         p5.background(246,224,181);
-        drawmainBar(p5);
         drawUpperSign(p5);
         drawStatisticMainInfo(p5);
         mainDiagram.display(p5);
         newTest.display(p5);
+        drawmainBar(p5);
     }
 
     public void drawmainBar(PApplet p5){

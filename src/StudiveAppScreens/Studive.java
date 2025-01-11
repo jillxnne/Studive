@@ -1,6 +1,5 @@
 package StudiveAppScreens;
 import processing.core.PApplet;
-
 import static StudiveAppScreens.GUI.*;
 
 public class Studive extends PApplet {
@@ -46,24 +45,10 @@ public class Studive extends PApplet {
     
     public void mousePressed() {
         if (gui.Default == SCREENS.HOMEPAGE) {
-            if (gui.home.mouseOverButton(this)) {
-                gui.Default = SCREENS.HOMEPAGE;
-            }
-
-            if (gui.plus.mouseOverButton(this)){
-                gui.plusFunctions.display(this);
-            }
-
-            if (gui.statistic.mouseOverButton(this)) {
-                gui.Default = SCREENS.GENERALSTATISTICS;
-            }
-
-            if (gui.foldermainbar.mouseOverButton(this)){
-                gui.Default = SCREENS.GENERALLESSONS;
-            }
+            mainBarFunctions(this);
 
             if (gui.mainfolder1.mouseOverButton(this) || gui.mainforlder2.mouseOverButton(this)) {
-                gui.Default = SCREENS.MAINLESSONS;
+                gui.Default = SCREENS.GENERALLESSONS;
             }
 
             if (gui.mainPageCard.checkMouseOver(this)) {
@@ -75,17 +60,7 @@ public class Studive extends PApplet {
             }
 
         } else if (gui.Default == SCREENS.GENERALLESSONS) {
-            if (gui.home.mouseOverButton(this)) {
-                gui.Default = SCREENS.HOMEPAGE;
-            }
-
-            if (gui.statistic.mouseOverButton(this)) {
-                gui.Default = SCREENS.GENERALSTATISTICS;
-            }
-
-            if (gui.foldermainbar.mouseOverButton(this)){
-                gui.Default = SCREENS.GENERALLESSONS;
-            }
+            mainBarFunctions(this);
 
             if (gui.mainPageLection.checkMouseOver(this)) {
                 gui.Default = SCREENS.MAINLESSONS;
@@ -100,26 +75,16 @@ public class Studive extends PApplet {
             }
 
         } else if (gui.Default == SCREENS.MAINLESSONS) {
-            if (gui.home.mouseOverButton(this)) {
-                gui.Default = SCREENS.HOMEPAGE;
-            }
-
-            if (gui.statistic.mouseOverButton(this)) {
-                gui.Default = SCREENS.GENERALSTATISTICS;
-            }
-
-            if (gui.foldermainbar.mouseOverButton(this)){
-                gui.Default = SCREENS.GENERALLESSONS;
-            }
+            mainBarFunctions(this);
 
             if (gui.typeOfLection.mouseOverSelect(this) && gui.typeOfLection.isEnabled()) {
                 if (!gui.typeOfLection.isCollapsed()) {
                     gui.typeOfLection.update(this);
                 }
                 gui.typeOfLection.toggle();
+            } else {
+                gui.Lection.isPressed(this);
             }
-            gui.Lection.isPressed(this);
-
 
             // if one is pressed, other one can't be pressed
             if (gui.done.onMouseOver(this)) {
@@ -133,25 +98,51 @@ public class Studive extends PApplet {
             }
 
         } else if (gui.Default == SCREENS.GENERALSTATISTICS) {
-            if (gui.home.mouseOverButton(this)) {
-                gui.Default = SCREENS.HOMEPAGE;
-            }
-
-            if (gui.statistic.mouseOverButton(this)) {
-                gui.Default = SCREENS.GENERALSTATISTICS;
-            }
-
-            if (gui.foldermainbar.mouseOverButton(this)){
-                gui.Default = SCREENS.GENERALLESSONS;
-            }
+            mainBarFunctions(this);
 
             if (gui.mainPageStat.checkMouseOver(this)) {
                 gui.Default = SCREENS.MAINSTATISTICS;
+            }
+            if (gui.statNext.mouseOverButton(this) && gui.statNext.isEnabled()) {
+                gui.mainPageStat.nextPage();
+            } else if (gui.statPrev.mouseOverButton(this) && gui.statPrev.isEnabled()) {
+                gui.mainPageStat.prevPage();
+            } else {
+                gui.mainPageStat.checkCardSelection(this);
             }
 
         } else if (gui.Default == SCREENS.MAINSTATISTICS) ;
         if (gui.home.mouseOverButton(this)) {
             gui.Default = SCREENS.HOMEPAGE;
+        }
+
+        if (gui.statistic.mouseOverButton(this)) {
+            gui.Default = SCREENS.GENERALSTATISTICS;
+        }
+
+        if (gui.foldermainbar.mouseOverButton(this)){
+            gui.Default = SCREENS.GENERALLESSONS;
+        }
+    }
+    public void mainBarFunctions(PApplet p5){
+        if (gui.home.mouseOverButton(this)) {
+            gui.Default = SCREENS.HOMEPAGE;
+        }
+
+        boolean pressed = false;
+        if (gui.plus.mouseOverButton(this)) {
+            pressed = true;
+        }
+
+        if (pressed) {
+            gui.plusFunctions.display(this);
+            gui.plusFunctions.setVisible(true);
+            boolean buttonHovered = gui.plusFunctions.b1.mouseOverButton(this) && gui.plusFunctions.b1.isEnabled()
+                    || gui.plusFunctions.b2.mouseOverButton(this) && gui.plusFunctions.b2.isEnabled()
+                    || gui.plusFunctions.b3.mouseOverButton(this) && gui.plusFunctions.b3.isEnabled();
+            if (!buttonHovered && !pressed) {
+                gui.plusFunctions.setVisible(false);
+            }
         }
 
         if (gui.statistic.mouseOverButton(this)) {
