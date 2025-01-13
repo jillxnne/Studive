@@ -101,19 +101,19 @@ public class GUI extends PApplet {
         mainPageCard.setDimensions(IDwidth +200,180, RecentLecturewidth+100, 625);
         mainPageCard.setData(info);
         mainPageCard.setCards();
-        mainPageCard.setImages(homefolderIcon, homeIcon);
+        mainPageCard.setImages(homeIcon);
 
         mainPageLection = new PagedCard(4);
         mainPageLection.setDimensions(535,160, RecentLecturewidth+300, 700);
         mainPageLection.setData(info);
         mainPageLection.setCards();
-        mainPageLection.setImages(homeIcon, homepressedIcon);
+        mainPageLection.setImages(homeIcon);
 
         mainPageStat = new PagedCard(5);
         mainPageStat.setDimensions(900,180, RecentLecturewidth+120, 625);
         mainPageStat.setData(info);
         mainPageStat.setCards();
-        mainPageStat.setImages(homeIcon, homepressedIcon);
+        mainPageStat.setImages(homeIcon);
     }
     public void setCheckBoxs(PApplet p5){
         done = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+25,30);
@@ -139,6 +139,7 @@ public class GUI extends PApplet {
         pluspressedIcon = p5.loadImage("data/plus.png");
         statisticIcon = p5.loadImage("data/statistics.png");
         statisticpressedIcon = p5.loadImage("data/statisticspressed.png");
+        mainfolderIcon = p5.loadImage("data/foldermain.png");
     }
 
     public void drawHomePage(PApplet p5){
@@ -175,7 +176,7 @@ public class GUI extends PApplet {
     }
 
     public void drawDoneLessons(PApplet p5){
-        p5.background(246,224,181);
+        p5.background(246,224,0);
         drawUpperSign(p5);
         mainPageLection.display(p5);
         lectNext.display(p5);
@@ -184,7 +185,7 @@ public class GUI extends PApplet {
 
     }
     public void drawNotDoneLessons(PApplet p5){
-        p5.background(246,224,181);
+        p5.background(246,224,100);
         drawUpperSign(p5);
         mainPageLection.display(p5);
         lectNext.display(p5);

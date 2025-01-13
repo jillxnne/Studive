@@ -64,7 +64,7 @@ public class Quiz extends PApplet {
         }
 
         app.fill(0, 255, 0);
-        app.rect(x + w / 2 - 50, y + h + 80, 100, 30);
+        app.rect(x + w / 2 - 50, y + h + 80, 100, 30,10);
         app.fill(0);
         app.textAlign(PApplet.CENTER, PApplet.CENTER);
         app.textSize(16);

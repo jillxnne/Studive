@@ -14,11 +14,11 @@ public class Try extends PApplet {
     public void setup() {
         quiz = new Quiz(100, 100, 400, 200,3);
         String[] options1 = {"Paris", "London", "Berlin"};
-        quiz.addQuestion("What is the capital of France?", options1, 0, 0);
+        quiz.addQuestion("capital Francia", options1, 0, 0);
         String[] options2 = {"2", "4", "6"};
-        quiz.addQuestion("What is 2 + 2?", options2, 1, 1);
-        String[] options3 = {"Harper Lee", "J.K. Rowling", "Ernest Hemingway"};
-        quiz.addQuestion("Who wrote 'To Kill a Mockingbird'?", options3, 0, 2);
+        quiz.addQuestion("2 + 2?", options2, 1, 1);
+        String[] options3 = {"ella", "yo", "tu"};
+        quiz.addQuestion("you", options3, 3, 2);
     }
 
     public void draw() {

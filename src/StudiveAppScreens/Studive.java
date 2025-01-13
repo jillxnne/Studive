@@ -165,17 +165,21 @@ public class Studive extends PApplet {
         if (gui.home.mouseOverButton(this)) {
             gui.Default = SCREENS.HOMEPAGE;
         }
-
-        boolean pressed = false;
-        if (gui.plus.mouseOverButton(this)) {
-            pressed = true;
-            if (pressed) {
-                gui.plusFunctions.display(this);
-                boolean buttonHovered = gui.plusFunctions.b1.mouseOverButton(this) && gui.plusFunctions.b1.isEnabled()
-                        || gui.plusFunctions.b2.mouseOverButton(this) && gui.plusFunctions.b2.isEnabled()
-                        || gui.plusFunctions.b3.mouseOverButton(this) && gui.plusFunctions.b3.isEnabled();
-                if (!buttonHovered && !pressed) {
-                    gui.plusFunctions.setVisible(false);
+        boolean plusVisible = false;
+        if (gui.plus.mouseOverButton(this) && mousePressed) {
+            plusVisible = true;
+        }
+        if (plusVisible) {
+            gui.plusFunctions.display(this);
+            if ((gui.plusFunctions.b1.mouseOverButton(this) && mousePressed && gui.plusFunctions.b1.isEnabled())
+                    || (gui.plusFunctions.b2.mouseOverButton(this) && mousePressed && gui.plusFunctions.b2.isEnabled())
+                    || (gui.plusFunctions.b3.mouseOverButton(this) && mousePressed && gui.plusFunctions.b3.isEnabled())) {
+                if (gui.plusFunctions.b1.mouseOverButton(this)) {
+                    System.out.println("B1");
+                } else if (gui.plusFunctions.b2.mouseOverButton(this)) {
+                    System.out.println("B2");
+                } else if (gui.plusFunctions.b3.mouseOverButton(this)) {
+                    System.out.println("B3");
                 }
             }
         }

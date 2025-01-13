@@ -20,7 +20,7 @@ public class Question extends PApplet {
     void displayQuestion(PApplet app, float x, float y, float w, float h) {
         app.fill(255);
         app.stroke(0);
-        app.rect(x, y, w, h);  // Rectángulo para la pregunta
+        app.rect(x, y, w, h,10);  // Rectángulo para la pregunta
 
         app.fill(0);
         app.textAlign(PApplet.CENTER, PApplet.TOP);

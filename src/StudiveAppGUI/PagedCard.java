@@ -11,24 +11,20 @@ public class PagedCard {
     int numTotalPages;
     float x, y, w, h;
     int selectedCard = -1;
-
     public PagedCard(int ncp) {
         this.numCardsPage = ncp;
         this.numPage = 0;
     }
-
     public void setDimensions(float x, float y, float w, float h) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
     }
-
     public void setData(String[][] d) {
         this.cardsData = d;
         this.numTotalPages = d.length / this.numCardsPage;
     }
-
     public void setCards() {
         cards = new Card[this.cardsData.length];
         for (int np=0; np<=numTotalPages; np++) {
@@ -47,8 +43,7 @@ public class PagedCard {
             }
         }
     }
-
-    public void setImages(PImage img1, PImage img2) {
+    public void setImages(PImage img1) {
         PImage img = null;
         for (int i=0; i<cards.length; i++) {
             if (cards[i]!=null) {
@@ -59,22 +54,17 @@ public class PagedCard {
             }
         }
     }
-
     public void nextPage() {
         if (this.numPage<this.numTotalPages) {
             this.numPage++;
         }
     }
-
     public void prevPage() {
         if (this.numPage>0) {
             this.numPage--;
         }
     }
-
-    // Dibuixa taula
     public void display(PApplet p5) {
-
         p5.pushStyle();
         int firstCardPage = numCardsPage*numPage;
         int lastCardPage  = numCardsPage*(numPage+1) - 1;
@@ -85,7 +75,6 @@ public class PagedCard {
         }
         p5.popStyle();
     }
-
     public void checkCardSelection(PApplet p5){
         boolean selected = false;
         int firstCardPage = numCardsPage*numPage;
@@ -101,7 +90,6 @@ public class PagedCard {
             selectedCard = -1;
         }
     }
-
     public boolean checkMouseOver(PApplet p5){
         int firstCardPage = numCardsPage*numPage;
         int lastCardPage  = numCardsPage*(numPage+1) - 1;
@@ -112,12 +100,4 @@ public class PagedCard {
         }
         return false;
     }
-
-    public boolean printSelectedCard(){
-        if(selectedCard !=-1){
-            Card cSelected = cards[selectedCard];
-        }
-        return false;
-    }
-
 }
