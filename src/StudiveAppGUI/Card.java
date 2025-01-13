@@ -45,11 +45,8 @@ public class Card {
         float imgW = (w/3) - 2*b;
         float imgH = h - 2*b;
         if(img!=null){
-            p5.image(img, x + b, y + b, imgW, imgH);
+            p5.image(this.img, x + b, y + b, imgW, imgH);
             p5.noFill(); p5.rect(x + b, y + b, imgW, imgH);
-        }
-        else {
-            p5.fill(50);
         }
         p5.rect(x + b, y + b, imgW, imgH);
 

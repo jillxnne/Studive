@@ -18,7 +18,7 @@ import processing.core.PImage;
 import javax.swing.*;
 
 public class GUI extends PApplet {
-    public enum SCREENS {HOMEPAGE, GENERALLESSONS, MAINLESSONS, GENERALSTATISTICS, MAINSTATISTICS};
+    public enum SCREENS {HOMEPAGE, GENERALLESSONS, MAINLESSONS, DONELESSONS, NOTDONELESSONS, GENERALSTATISTICS, MAINSTATISTICS};
     public SCREENS Default;
     ImageButtons home, foldermainbar, plus, statistic, mainfolder1, mainforlder2;
     PImage homeIcon,homepressedIcon, homefolderIcon, homefolderpressedIcon, plusIcon,
@@ -101,19 +101,19 @@ public class GUI extends PApplet {
         mainPageCard.setDimensions(IDwidth +200,180, RecentLecturewidth+100, 625);
         mainPageCard.setData(info);
         mainPageCard.setCards();
-        mainPageCard.setImages(homeIcon);
+        mainPageCard.setImages(homefolderIcon, homeIcon);
 
         mainPageLection = new PagedCard(4);
         mainPageLection.setDimensions(535,160, RecentLecturewidth+300, 700);
         mainPageLection.setData(info);
         mainPageLection.setCards();
-        mainPageLection.setImages(homeIcon);
+        mainPageLection.setImages(homeIcon, homepressedIcon);
 
         mainPageStat = new PagedCard(5);
         mainPageStat.setDimensions(900,180, RecentLecturewidth+120, 625);
         mainPageStat.setData(info);
         mainPageStat.setCards();
-        mainPageStat.setImages(homeIcon);
+        mainPageStat.setImages(homeIcon, homepressedIcon);
     }
     public void setCheckBoxs(PApplet p5){
         done = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+25,30);
@@ -171,6 +171,24 @@ public class GUI extends PApplet {
         if (typeOfLection.getSelectedValue() == "TEST"){
             accessResults.display(p5);
         }
+        drawmainBar(p5);
+    }
+
+    public void drawDoneLessons(PApplet p5){
+        p5.background(246,224,181);
+        drawUpperSign(p5);
+        mainPageLection.display(p5);
+        lectNext.display(p5);
+        lectPrev.display(p5);
+        drawmainBar(p5);
+
+    }
+    public void drawNotDoneLessons(PApplet p5){
+        p5.background(246,224,181);
+        drawUpperSign(p5);
+        mainPageLection.display(p5);
+        lectNext.display(p5);
+        lectPrev.display(p5);
         drawmainBar(p5);
     }
 

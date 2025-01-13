@@ -48,7 +48,7 @@ public class PagedCard {
         }
     }
 
-    public void setImages(PImage img1) {
+    public void setImages(PImage img1, PImage img2) {
         PImage img = null;
         for (int i=0; i<cards.length; i++) {
             if (cards[i]!=null) {
