@@ -32,16 +32,16 @@ public class GUI extends PApplet {
     PopUp plusFunctions, lessonFunctions;
 
     String[][] info = {
-            {"Títol 1", "Lloc 1"},
-            {"Títol 2", "Lloc 2"},
-            {"Títol 3", "Lloc 3"},
-            {"Títol 4", "Lloc 4"},
-            {"Títol 5", "Lloc 5"},
-            {"Títol 6", "Lloc 6"},
-            {"Títol 7", "Lloc 7"},
-            {"Títol 8", "Lloc 8"},
-            {"Títol 9", "Lloc 9"},
-            {"Títol 0", "Lloc 0"},
+            {"Títol 1", "Lloc 1","A", "Títol 1", "Lloc 1"},
+            {"Títol 2", "Lloc 2","Títol 1", "Lloc 1","A"},
+            {"Títol 3", "Lloc 3","Títol 1", "Lloc 1","A"},
+            {"Títol 4", "Lloc 4","Títol 1", "Lloc 1","A"},
+            {"Títol 5", "Lloc 5","Títol 1", "Lloc 1","A"},
+            {"Títol 6", "Lloc 6","Títol 1", "Lloc 1","A"},
+            {"Títol 7", "Lloc 7","Títol 1", "Lloc 1","A"},
+            {"Títol 8", "Lloc 8","Títol 1", "Lloc 1","A"},
+            {"Títol 9", "Lloc 9","Títol 1", "Lloc 1","A"},
+            {"Títol 0", "Lloc 0","Títol 1", "Lloc 1","A"},
     };
 
     String[] text = {"CAS", "TOK", "MN"};

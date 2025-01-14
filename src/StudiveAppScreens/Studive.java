@@ -168,6 +168,7 @@ public class Studive extends PApplet {
         boolean plusVisible = false;
         if (gui.plus.mouseOverButton(this) && mousePressed) {
             plusVisible = true;
+            System.out.println("A");
         }
         if (plusVisible) {
             gui.plusFunctions.display(this);
