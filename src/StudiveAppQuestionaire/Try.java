@@ -11,30 +11,20 @@ public class Try extends PApplet {
         smooth(10);
     }
     Quiz quiz;
+
     public void setup() {
-        quiz = new Quiz(100, 100, 400, 200,3);
-        String[] options1 = {"Paris", "London", "Berlin"};
-        quiz.addQuestion("capital Francia", options1, 0, 0);
-        String[] options2 = {"2", "4", "6"};
-        quiz.addQuestion("2 + 2?", options2, 1, 1);
-        String[] options3 = {"ella", "yo", "tu"};
-        quiz.addQuestion("you", options3, 3, 2);
+        quiz = new Quiz();
     }
 
     public void draw() {
-        background(200, 230, 255);
-        quiz.display(this);
+        background(0);
+        quiz.handleInput(this);
     }
 
     public void mousePressed() {
-        quiz.checkClick(mouseX, mouseY);
+        quiz.mousePressed(this);
     }
-
     public void keyPressed() {
-        if (keyCode == RIGHT) {
-            quiz.nextQuestion();
-        } else if (keyCode == LEFT) {
-            quiz.previousQuestion();
-        }
+        quiz.keyPressed(this);
     }
 }
