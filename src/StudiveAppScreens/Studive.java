@@ -90,6 +90,11 @@ public class Studive extends PApplet {
     public void keyPressed() {
         gui.Lection.keyPressed(key, keyCode);
         gui.namechange.keyPressed(key, keyCode);
+        gui.subjecttitle.keyPressed(key, keyCode);
+        gui.title1.keyPressed(key, keyCode);
+        gui.description1.keyPressed(key, keyCode);
+        gui.title0.keyPressed(key, keyCode);
+        gui.description0.keyPressed(key, keyCode);
 
         if (key =='1'){
             gui.Default = SCREENS.NOPDF;
@@ -144,6 +149,7 @@ public class Studive extends PApplet {
             }
 
         } else if (gui.Default == SCREENS.ADDSUBJECT){
+            gui.subjecttitle.isPressed(this);
             gui.colorss.checkMouseOver(this,800,520,300);
             if (gui.bigback.mouseOverButton(this)){
                 gui.Default=SCREENS.GENERALLESSONS;
@@ -213,23 +219,31 @@ public class Studive extends PApplet {
             }
 
         } else if (gui.Default == SCREENS.ADDPDF){
-        upperBarFunctions(this);
+            gui.title0.isPressed(this);
+            gui.description0.isPressed(this);
+            upperBarFunctions(this);
         if (gui.bigback1.mouseOverButton(this)){
             gui.Default=SCREENS.PDFPAGE;
         }
 
         } else if (gui.Default == SCREENS.ADDQUIZ){
+            gui.title1.isPressed(this);
+            gui.description1.isPressed(this);
         upperBarFunctions(this);
         if (gui.bigback.mouseOverButton(this)){
             gui.Default=SCREENS.QUIZPAGE;
         }
 
         } else if (gui.Default == SCREENS.ADDLINK){
+            gui.title0.isPressed(this);
+            gui.description0.isPressed(this);
         if (gui.bigback1.mouseOverButton(this)){
             gui.Default=SCREENS.LINKSPAGE;
         }
 
         } else if (gui.Default == SCREENS.ADDCARD){
+            gui.title1.isPressed(this);
+            gui.description1.isPressed(this);
         if (gui.bigback.mouseOverButton(this)){
             gui.Default=SCREENS.CARDSPAGE;
         }
@@ -263,7 +277,6 @@ public class Studive extends PApplet {
 
         } else if (gui.Default == SCREENS.MAINLESSONS) {
             mainBarFunctions(this);
-
            if (gui.typeOfLection.mouseOverSelect(this) && gui.typeOfLection.isEnabled()) {
                 if (!gui.typeOfLection.isCollapsed()) {
                     gui.typeOfLection.update(this);
@@ -272,22 +285,18 @@ public class Studive extends PApplet {
             } else {
                 gui.Lection.isPressed(this);
             }
-
             if (gui.done.onMouseOver(this)) {
                 gui.done.toggle();
             }
-
             if (gui.accessResults.mouseOverButton(this)) {
                 gui.Default = SCREENS.MAINSTATISTICS;
             }
-
-            if (gui.mainback.mouseOverButton(this)){
-                gui.Default = SCREENS.PDFPAGE;
+            if (gui.mainback.mouseOverButton(this)) {
+                gui.Default=SCREENS.DONELESSONS;
             }
 
         } else if (gui.Default == SCREENS.GENERALSTATISTICS) {
             mainBarFunctions(this);
-
             if (gui.mainPageStat.checkMouseOver(this)) {
                 gui.Default = SCREENS.MAINSTATISTICS;
             }
@@ -301,7 +310,7 @@ public class Studive extends PApplet {
 
         } else if (gui.Default == SCREENS.MAINSTATISTICS) ;
             mainBarFunctions(this);
-            if (gui.mainback.mouseOverButton(this)){
+            if (gui.mainback1.mouseOverButton(this)){
                 gui.Default=SCREENS.GENERALSTATISTICS;
             }
     }

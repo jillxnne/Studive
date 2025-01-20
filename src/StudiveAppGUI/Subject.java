@@ -23,42 +23,36 @@ public class Subject {
         this.b = b;
     }
 
-    // Método para asignar la imagen a la tarjeta
     public void setImage(PImage img) {
         this.img = img;
     }
 
-    // Método para mostrar la tarjeta
     public void display(PApplet p5) {
         p5.pushStyle();
 
-        // Asignar color dependiendo del título
         if (title.equals("info")) {
-            p5.fill(0, 255, 0);  // Verde para "info"
+            p5.fill(102, 84, 94);
         } else if (title.equals("mates")) {
-            p5.fill(0, 0, 255);  // Azul para "mates"
+            p5.fill(238, 169, 144);
         } else if (title.equals("historia")) {
-            p5.fill(255, 0, 0);  // Rojo para "historia"
+            p5.fill(170, 111, 115);
         } else {
-            p5.fill(220);  // Color por defecto (gris)
+            p5.fill(220);
         }
 
-        // Dibuja la tarjeta con el fondo colorido
         p5.rect(x, y, w, h, b / 2);
 
         if (img != null) {
-            float imgW = w / 2; // La imagen ocupa la mitad del ancho de la tarjeta
-            float imgH = h - 2 * b; // La imagen ocupa la mitad de la altura de la tarjeta
-            float imgX = x + (w - imgW) / 2; // Centrar la imagen en el eje X
-            float imgY = y + (h - imgH) / 2; // Centrar la imagen en el eje Y
-            p5.image(img, imgX, imgY, imgW, imgH); // Dibuja la imagen centrada
+            float imgW = w / 2;
+            float imgH = h - 2 * b;
+            float imgX = x + (w - imgW) / 2;
+            float imgY = y + (h - imgH) / 2;
+            p5.image(img, imgX, imgY, imgW, imgH);
 
-            // Muestra el título centrado sobre la imagen
-            p5.fill(255);  // Blanco para el texto (para que destaque sobre la imagen)
-            p5.textSize(48); // Título más grande
-            p5.textAlign(p5.CENTER, p5.CENTER); // Centrar el texto en X e Y
-            // El texto se centra en la imagen, ajustando las coordenadas para estar sobre ella
-            p5.text(title, imgX + imgW / 2, imgY + imgH / 2); // Centrado sobre la imagen
+            p5.fill(0);
+            p5.textSize(48);
+            p5.textAlign(p5.CENTER, p5.CENTER);
+            p5.text(title, imgX + imgW / 2, imgY + imgH / 2);
         }
 
         p5.popStyle();

@@ -26,10 +26,10 @@ public class Fonts {
     public PFont getFirstFont(){
         return  this.fonts[0];
     }
-    PFont getSecondFont(){
+    public PFont getSecondFont(){
         return  this.fonts[1];
     }
-    PFont getThirdFont(){
+    public PFont getThirdFont(){
         return  this.fonts[2];
     }
     PFont getFontAt(int i){

@@ -96,7 +96,7 @@ public class Flashcards {
         }
     }
 
-    void display(PApplet app) {
+    public void display(PApplet app) {
         if (awaitingNumCards || enteringQuestions || enteringAnswers) {
             confirmButton.display(app);
         } else {

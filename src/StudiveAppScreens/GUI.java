@@ -22,11 +22,11 @@ public class GUI extends PApplet {
         GENERALSTATISTICS, MAINSTATISTICS};
     public SCREENS Default;
     ImageButtons home, foldermainbar, plus, statistic, mainfolder1, mainforlder2, editName, edit, back, bigback,
-            bigback1, share, mainback;
+            bigback1, share, mainback, mainback1;
     PImage homeIcon,homepressedIcon, homefolderIcon, homefolderpressedIcon, plusIcon, pdfIcon, testIcon, linkIcon,
             flashcardIcon, pluspressedIcon, statisticIcon, statisticpressedIcon, mainfolderIcon, editIcon,
             editpressedIcon, backIcon, backpressedIcon, shareIcon, sharepressedIcon;
-    TextArea Lection, namechange;
+    TextArea Lection, namechange, title0,description0,title1,description1, subjecttitle;
     Checkbox done, notDone;
     PagedCard mainPageCard, mainPageStat, pagePDF, pageCard, pageLink,pageTest, mainPage;
     PagedSubject mainPageLection;
@@ -194,7 +194,7 @@ public class GUI extends PApplet {
 
         pageTest = new PagedCard(4);
         pageTest.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
-        pageTest.setData(pdf);
+        pageTest.setData(test);
         pageTest.setCards();
         pageTest.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
 
@@ -212,6 +212,13 @@ public class GUI extends PApplet {
     public void setTextFields(PApplet p5){
         Lection = new TextArea(p5, (int)PanelBoardwidth+313, (int)PanelBoardheight-320, 500,290, 45,13);
         namechange = new TextArea(p5,750,450,400,50,40,13);
+        subjecttitle = new TextArea(p5,650,630,550,40,40,23);
+
+        title0 = new TextArea(p5,650,460,550,40,40,23);
+        description0 = new TextArea(p5,650,550,550,60,40,23);
+
+        title1 = new TextArea(p5,650,510,550,40,40,23);
+        description1 = new TextArea(p5,650,630,550,40,40,23);
     }
     public void setImageButtons(PApplet p5){
         home = new ImageButtons(p5, homeIcon,homepressedIcon, 650,990,30);
@@ -225,6 +232,7 @@ public class GUI extends PApplet {
         bigback = new ImageButtons(p5,backIcon,backpressedIcon,650,300,25);
         bigback1 = new ImageButtons(p5,backIcon,backpressedIcon,650,250,25);
         mainback = new ImageButtons(p5,backIcon,backpressedIcon,150,110,25);
+        mainback1 = new ImageButtons(p5,backIcon,backpressedIcon,150,110,25);
 
         mainfolder1 = new ImageButtons(p5, mainfolderIcon, mainfolderIcon, 600, 350,180);
         mainforlder2 = new ImageButtons(p5, mainfolderIcon, mainfolderIcon, 600, 720, 180);
@@ -296,9 +304,7 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Name of subject: ",650,620);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,630,550,40);
+        subjecttitle.display(p5);
         create.display(p5);
         colorss.displayColors(p5, 800,520,300);
         bigback.display(p5);
@@ -350,8 +356,6 @@ public class GUI extends PApplet {
     public void drawGreetings(PApplet p5){
         p5.textSize(TitleSize);
         p5.text("Hola, X",125,FullScreenheight-980);
-        p5.textSize(MidTitleSize);
-        p5.text("EEE, dd MMM", 126, FullScreenheight-950);
     }
 
     public void drawMainLessons(PApplet p5){
@@ -390,15 +394,11 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Title: ",650,450);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,460,550,40);
+        title0.display(p5);
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Description: ",650,530);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,550,550,60);
+        description0.display(p5);
         addlink.display(p5);
         create.display(p5);
         bigback1.display(p5);
@@ -411,15 +411,11 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Title: ",650,450);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,460,550,40);
+        title0.display(p5);
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Description: ",650,530);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,550,550,60);
+        description0.display(p5);
         addlink.display(p5);
         create.display(p5);
         bigback1.display(p5);
@@ -432,15 +428,11 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Title: ",650,500);
+        title1.display(p5);
         p5.fill(0);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,510,550,40);
         p5.textSize(SubtitleSize);
         p5.text("Description: ",650,620);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,630,550,40);
+        description1.display(p5);
         create.display(p5);
         bigback.display(p5);
     }
@@ -452,15 +444,11 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Title: ",650,500);
+        title1.display(p5);
         p5.fill(0);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,510,550,40);
         p5.textSize(SubtitleSize);
         p5.text("Description: ",650,620);
-        p5.noFill();
-        p5.stroke(0);
-        p5.rect(650,630,550,40);
+        description1.display(p5);
         create.display(p5);
         bigback.display(p5);
     }
@@ -539,6 +527,7 @@ public class GUI extends PApplet {
     }
 
     public void drawRecentLecturesList(PApplet p5) {
+        p5.textFont(fonts.getThirdFont());
         p5.textSize(MidTitleSize);
         p5.text("Lecciones recientes", IDwidth-70, 180);
         mainPageCard.display(p5);
@@ -598,11 +587,16 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(MidTitleSize);
         p5.text("ERRORES: ", StatisticMainBoardwidth+480,StatisticMainBoardheight-360);
+        p5.fill(255);
+        p5.rect(StatisticMainBoardwidth+480,StatisticMainBoardheight-340,400,200);
         // afegir boto Errores
+        p5.fill(0);
         p5.textSize(MidTitleSize);
         p5.text("RECOMENDACIONES: ", StatisticMainBoardwidth+480,StatisticMainBoardheight-110);
+        p5.fill(255);
+        p5.rect(StatisticMainBoardwidth+480,StatisticMainBoardheight-90,400,200);
         //afegir boto Recomendaciones
-        mainback.display(p5);
+        mainback1.display(p5);
     }
 
     public void drawStatisticGenInfo(PApplet p5) {
@@ -612,11 +606,14 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("RESULTADOS: ", StatisticGenBoardwidth - 300, StatisticGenBoardheight + 330);
-        p5.fill(0);
-        p5.rect(StatisticGenBoardwidth-300, StatisticGenBoardheight+340, 100,100);
+        p5.fill(255);
+        p5.rect(StatisticGenBoardwidth-300, StatisticGenBoardheight+340, 500,80);
         // afegir boto Errores
         p5.textSize(SubtitleSize);
+        p5.fill(0);
         p5.text("RECOMENDACIONES: ", StatisticGenBoardwidth - 300, StatisticGenBoardheight + 460);
+        p5.fill(255);
+        p5.rect(StatisticGenBoardwidth - 300, StatisticGenBoardheight + 480, 500,70);
         //afegir boto Recomendaciones és un text field
     }
 }
