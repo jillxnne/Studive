@@ -23,7 +23,7 @@ public class Fonts {
     int getNumFonts(){
         return this.fonts.length;
     }
-    PFont getFirstFont(){
+    public PFont getFirstFont(){
         return  this.fonts[0];
     }
     PFont getSecondFont(){

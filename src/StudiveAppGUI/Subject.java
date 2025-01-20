@@ -1,7 +1,9 @@
-package gui;
+package StudiveAppGUI;
+
 import processing.core.PApplet;
 import processing.core.PImage;
-public class Card {
+
+public class Subject {
     String title;  // Solo mantenemos el título
     PImage img;    // Imagen para la tarjeta
 
@@ -9,7 +11,7 @@ public class Card {
     float x, y, w, h, b;
 
     // Constructor
-    public Card(String title) {
+    public Subject(String title) {
         this.title = title;
     }
 
@@ -44,19 +46,20 @@ public class Card {
         // Dibuja la tarjeta con el fondo colorido
         p5.rect(x, y, w, h, b / 2);
 
-        // Muestra la imagen en la tarjeta
         if (img != null) {
-            float imgW = w / 3; // La imagen ocupa un tercio de la tarjeta
-            float imgH = h - 2 * b; // La imagen ocupa toda la altura, menos los bordes
-            p5.image(img, x + b, y + b, imgW, imgH);
+            float imgW = w / 2; // La imagen ocupa la mitad del ancho de la tarjeta
+            float imgH = h - 2 * b; // La imagen ocupa la mitad de la altura de la tarjeta
+            float imgX = x + (w - imgW) / 2; // Centrar la imagen en el eje X
+            float imgY = y + (h - imgH) / 2; // Centrar la imagen en el eje Y
+            p5.image(img, imgX, imgY, imgW, imgH); // Dibuja la imagen centrada
+
+            // Muestra el título centrado sobre la imagen
+            p5.fill(255);  // Blanco para el texto (para que destaque sobre la imagen)
+            p5.textSize(48); // Título más grande
+            p5.textAlign(p5.CENTER, p5.CENTER); // Centrar el texto en X e Y
+            // El texto se centra en la imagen, ajustando las coordenadas para estar sobre ella
+            p5.text(title, imgX + imgW / 2, imgY + imgH / 2); // Centrado sobre la imagen
         }
-
-
-        // Títol: solo mostramos el título de la tarjeta (info, mates, historia)
-        p5.fill(0);
-        p5.textSize(24);
-        p5.textAlign(p5.CENTER);
-        p5.text(title, x + w / 2, y + h / 2);
 
         p5.popStyle();
     }
@@ -66,4 +69,3 @@ public class Card {
                 this.y < p5.mouseY && p5.mouseY < this.y + this.h;
     }
 }
-

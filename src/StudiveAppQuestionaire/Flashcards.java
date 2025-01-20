@@ -13,7 +13,7 @@ public class Flashcards {
     int cardIndex;
     Button nextButton, prevButton, toggleButton, confirmButton;
 
-    Flashcards() {
+    public Flashcards() {
         cards = new Card[0]; // Comenzamos con un array vacío
         currentIndex = 0;
         showAnswer = false;

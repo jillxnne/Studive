@@ -56,7 +56,7 @@ public class Button {
         else{
             p5.fill(fillColor);          // Color actiu però ratolí fora
         }
-        p5.stroke(strokeColor); p5.strokeWeight(2);        //Color i gruixa del contorn
+        p5.stroke(strokeColor); p5.strokeWeight(0);        //Color i gruixa del contorn
         p5.rect(this.x, this.y, this.w, this.h, 10);    // Rectangle del botó
 
         // Text (color, alineació i mida)
@@ -69,6 +69,13 @@ public class Button {
     public boolean mouseOverButton(PApplet p5){
         return (p5.mouseX >= this.x) && (p5.mouseX <= this.x + this.w) &&
                 (p5.mouseY >= this.y) && (p5.mouseY <= this.y + this.h);
+    }
+    boolean isPressed(float px, float py) {
+        return px > x && px < x + w && py > y && py < y + h;
+    }
+
+    void setText(String newText) {
+        this.textBoto = newText;
     }
 
 }

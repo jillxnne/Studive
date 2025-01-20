@@ -1,12 +1,12 @@
 package StudiveAppGUI;
+import StudiveAppGUI.Card;
 import processing.core.PApplet;
 import processing.core.PImage;
 
 public class PagedCard {
-    String[][] cardsData;    // Dades de les Cards
-    Card[] cards;            // Cards
-    int numCards;            // Número total de Cards
-    int numCardsPage;        // Número de Cards en 1 Pàgina
+    String[][] cardsData;
+    Card[] cards;
+    int numCardsPage;
     int numPage;
     int numTotalPages;
     float x, y, w, h;
@@ -27,15 +27,14 @@ public class PagedCard {
     }
     public void setCards() {
         cards = new Card[this.cardsData.length];
-        for (int np=0; np<=numTotalPages; np++) {
-            int firstCardPage = numCardsPage*np;
-            int lastCardPage  = numCardsPage*(np+1) - 1;
+        for (int np = 0; np <= numTotalPages; np++) {
+            int firstCardPage = numCardsPage * np;
+            int lastCardPage = numCardsPage * (np + 1) - 1;
             float hCard = h / (float) numCardsPage;
             float yCard = y;
             float b = 10;
-
             for (int i = firstCardPage; i <= lastCardPage; i++) {
-                if (i<cards.length) {
+                if (i < cards.length) {
                     cards[i] = new Card(cardsData[i]);
                     cards[i].setDimensions(x, yCard, w, hCard, b);
                     yCard += hCard + b;
@@ -43,14 +42,21 @@ public class PagedCard {
             }
         }
     }
-    public void setImages(PImage img1) {
+    public void setImages(PImage imgCard, PImage imgPdf, PImage imgLink, PImage imgTest) {
         PImage img = null;
-        for (int i=0; i<cards.length; i++) {
-            if (cards[i]!=null) {
-                if (cards[i].section=="Secció 1") {
-                    img = img1;
+        for (int i = 0; i < cards.length; i++) {
+            if (cards[i] != null) {
+                // Asignar imagen según la sección
+                if (cards[i].section.equals("cards")) {
+                    img = imgCard; // Imagen para la sección "cards"
+                } else if (cards[i].section.equals("pdf")) {
+                    img = imgPdf; // Imagen para la sección "pdf"
+                } else if (cards[i].section.equals("link")) {
+                    img = imgLink; // Imagen para la sección "link"
+                } else if (cards[i].section.equals("test")) {
+                    img = imgTest; // Imagen para la sección "test"
                 }
-                cards[i].setImage(img);
+                cards[i].setImage(img); // Asignar la imagen al card
             }
         }
     }
