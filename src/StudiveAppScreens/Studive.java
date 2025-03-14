@@ -4,7 +4,8 @@ import static StudiveAppScreens.GUI.*;
 
 public class Studive extends PApplet {
     GUI gui;
-
+    String currentPage = "PDF";
+    DataBase db;
     public static void main(String[] args) {
         PApplet.main("StudiveAppScreens.Studive", args);
     }
@@ -17,11 +18,16 @@ public class Studive extends PApplet {
     public void setup() {
         background(255);
         gui = new GUI(this);
-
+        db = new DataBase("admin", "12345", "studive");
+        db.connect();
+        db.getInfo("COLOR", "asignatura", "ID", "Mates");
     }
 
     public void draw() {
         switch (gui.Default) {
+            case LOGINPAGE:
+                gui.drawLoginPage(this);
+                break;
             case HOMEPAGE:
                 gui.drawHomePage(this);
                 break;
@@ -74,16 +80,16 @@ public class Studive extends PApplet {
                 gui.drawMainStatistics(this);
                 break;
             case PDFPAGE:
-                gui.drawPDFPage(this);
+                gui.drawPage(this,currentPage);
                 break;
             case LINKSPAGE:
-                gui.drawLinkPage(this);
+                gui.drawPage(this,currentPage);
                 break;
             case QUIZPAGE:
-                gui.drawQuizPage(this);
+                gui.drawPage(this,currentPage);
                 break;
             case CARDSPAGE:
-                gui.drawCardsPage(this);
+                gui.drawPage(this,currentPage);
                 break;
         }
     }
@@ -95,6 +101,8 @@ public class Studive extends PApplet {
         gui.description1.keyPressed(key, keyCode);
         gui.title0.keyPressed(key, keyCode);
         gui.description0.keyPressed(key, keyCode);
+        gui.username.keyPressed(key,keyCode);
+        gui.password.keyPressed(key,keyCode);
 
         if (key =='1'){
             gui.Default = SCREENS.NOPDF;
@@ -108,10 +116,31 @@ public class Studive extends PApplet {
         if (key =='4'){
             gui.Default = SCREENS.NOLINK;
         }
+        if (key =='5'){
+            gui.Default = SCREENS.LOGINPAGE;
+        }
     }
     
     public void mousePressed() {
-        if (gui.Default == SCREENS.HOMEPAGE) {
+
+        if (gui.PDFfiles.mouseOverButton(this)) {
+            currentPage = "PDF";  // Cambiar a la página PDF
+        } else if (gui.Flashcardsfiles.mouseOverButton(this)) {
+            currentPage = "FLASHCARDS";  // Cambiar a la página de tarjetas
+        } else if (gui.Quizfiles.mouseOverButton(this)) {
+            currentPage = "QUIZ";  // Cambiar a la página de quiz
+        } else if (gui.Linksfiles.mouseOverButton(this)) {
+            currentPage = "LINKS";  // Cambiar a la página de enlaces
+        }
+        if (gui.Default == SCREENS.LOGINPAGE){
+            if (gui.Login.mouseOverButton(this)){
+                gui.Default = SCREENS.HOMEPAGE;
+            }
+            gui.password.isPressed(this);
+            gui.username.isPressed(this);
+        }
+
+        else if (gui.Default == SCREENS.HOMEPAGE) {
             mainBarFunctions(this);
             if (gui.mainfolder1.mouseOverButton(this)) {
                 gui.Default = SCREENS.NOTDONELESSONS;

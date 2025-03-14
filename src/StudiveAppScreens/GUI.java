@@ -4,7 +4,6 @@ import StudiveAppGUI.PagedCard;
 import StudiveAppGUI.Button;
 import StudiveAppGUI.BarsDiagram;
 import StudiveAppGUI.SelectButton;
-import StudiveAppGUI.PopUp;
 import StudiveAppGUI.PagedSubject;
 import processing.core.PApplet;
 import static StudiveAppLayout.Layout.*;
@@ -17,24 +16,23 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 public class GUI extends PApplet {
-    public enum SCREENS {HOMEPAGE, GENERALLESSONS, MAINLESSONS, EDITNAME, ADDSUBJECT,LINKSPAGE, PDFPAGE, CARDSPAGE,
-        QUIZPAGE, NOLINK, NOPDF, NOCARD, NOQUIZ, ADDLINK, ADDPDF, ADDQUIZ, ADDCARD, DONELESSONS, NOTDONELESSONS,
-        GENERALSTATISTICS, MAINSTATISTICS};
+    public enum SCREENS {LOGINPAGE, HOMEPAGE, GENERALLESSONS, MAINLESSONS, EDITNAME, ADDSUBJECT,LINKSPAGE, PDFPAGE,
+        CARDSPAGE, QUIZPAGE, NOLINK, NOPDF, NOCARD, NOQUIZ, ADDLINK, ADDPDF, ADDQUIZ, ADDCARD, DONELESSONS,
+        NOTDONELESSONS, GENERALSTATISTICS, MAINSTATISTICS};
     public SCREENS Default;
     ImageButtons home, foldermainbar, plus, statistic, mainfolder1, mainforlder2, editName, edit, back, bigback,
             bigback1, share, mainback, mainback1;
     PImage homeIcon,homepressedIcon, homefolderIcon, homefolderpressedIcon, plusIcon, pdfIcon, testIcon, linkIcon,
             flashcardIcon, pluspressedIcon, statisticIcon, statisticpressedIcon, mainfolderIcon, editIcon,
-            editpressedIcon, backIcon, backpressedIcon, shareIcon, sharepressedIcon;
-    TextArea Lection, namechange, title0,description0,title1,description1, subjecttitle;
+            editpressedIcon, backIcon, backpressedIcon, shareIcon, sharepressedIcon, loginIcon;
+    TextArea Lection, namechange, title0,description0,title1,description1, subjecttitle, username, password;
     Checkbox done, notDone;
     PagedCard mainPageCard, mainPageStat, pagePDF, pageCard, pageLink,pageTest, mainPage;
     PagedSubject mainPageLection;
     Button lectNext, lectPrev, statNext, statPrev, newTest, accessResults, PDFfiles, Flashcardsfiles,
-            Quizfiles, Linksfiles,addFile,saveName, create, add0File, addlink, mainNext, mainPrev;
+            Quizfiles, Linksfiles,addFile,saveName, create, add0File, addlink, mainNext, mainPrev, Login;
     BarsDiagram genDiagram, mainDiagram;
     SelectButton typeOfLection;
-    PopUp plusFunctions, lessonFunctions;
     Colors colorss;
     Fonts fonts;
 
@@ -100,7 +98,6 @@ public class GUI extends PApplet {
         setBarsDiagrams();
         setAccessButtons(p5);
         setSelectButtons();
-        setPopUps(p5);
         setLessonTypeButtons(p5);
         setPagedSubjects();
         setColorss(p5);
@@ -108,14 +105,6 @@ public class GUI extends PApplet {
     }
     public void setColorss(PApplet p5){
         colorss = new Colors(p5);
-    }
-
-    public void setPopUps(PApplet p5){
-        plusFunctions = new PopUp(p5, 100, 100, 800, 340);
-        plusFunctions.setTextButtons("PDF", "FLASHCARDS", "TEST");
-
-        lessonFunctions = new PopUp(p5,100,100,800,340);
-        lessonFunctions.setTextButtons("SHARE", "EDIT", "CHANGE LOCATION");
     }
 
     public void setSelectButtons(){
@@ -154,6 +143,7 @@ public class GUI extends PApplet {
         newTest = new Button(p5, "MAKE NEW TEST", 340, 780, 400, 50);
         saveName = new Button(p5, "SAVE", 900,520,100,50);
         create = new Button(p5, "CREATE", 900,700,100,50);
+        Login = new Button(p5, "LOGIN", 890, 690,100,50);
     }
     public void setPagedCards(){
         mainPageCard = new PagedCard(3);
@@ -207,7 +197,6 @@ public class GUI extends PApplet {
     }
     public void setCheckBoxs(PApplet p5){
         done = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+25,30);
-        notDone = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+75,30);
     }
     public void setTextFields(PApplet p5){
         Lection = new TextArea(p5, (int)PanelBoardwidth+313, (int)PanelBoardheight-320, 500,290, 45,13);
@@ -219,6 +208,9 @@ public class GUI extends PApplet {
 
         title1 = new TextArea(p5,650,510,550,40,40,23);
         description1 = new TextArea(p5,650,630,550,40,40,23);
+
+        username = new TextArea(p5, 690, 540, 550,40,40,23);
+        password = new TextArea(p5, 690,630,550,40,40,23);
     }
     public void setImageButtons(PApplet p5){
         home = new ImageButtons(p5, homeIcon,homepressedIcon, 650,990,30);
@@ -257,8 +249,20 @@ public class GUI extends PApplet {
         backpressedIcon = p5.loadImage("data/backpressed.png");
         shareIcon = p5.loadImage("data/share.png");
         sharepressedIcon = p5.loadImage("data/sharepressed.png");
+        loginIcon = p5.loadImage("data/foldermain.png");
     }
 
+    public void drawLoginPage(PApplet p5){
+        p5.background(246,224,181);
+        p5.image(loginIcon, 795,200,300,300);
+        p5.textSize(MidTitleSize);
+        p5.text("Usuario", 690, 530);
+        username.display(p5);
+        p5.textSize(MidTitleSize);
+        p5.text("Contraseña", 690, 615);
+        password.display(p5);
+        Login.display(p5);
+    }
     public void drawHomePage(PApplet p5){
         p5.background(246,224,181);
         drawGreetings(p5);
@@ -377,14 +381,6 @@ public class GUI extends PApplet {
         }
         drawmainBar(p5);
     }
-    public void drawPDFPage(PApplet p5){
-        p5.background(246,224,181);
-        drawSubjectBar(p5);
-        drawUpperSign(p5);
-        pagePDF.display(p5);
-        addFile.display(p5);
-        drawmainBar(p5);
-    }
 
     public void drawAddLink(PApplet p5){
         p5.background(246,224,181);
@@ -453,29 +449,21 @@ public class GUI extends PApplet {
         bigback.display(p5);
     }
 
-    public void drawCardsPage(PApplet p5){
+    public void drawPage(PApplet p5, String pageType){
         p5.background(246,224,181);
         drawSubjectBar(p5);
         drawUpperSign(p5);
-        pageCard.display(p5);
-        addFile.display(p5);
-        drawmainBar(p5);
-    }
 
-    public void drawQuizPage(PApplet p5){
-        p5.background(246,224,181);
-        drawSubjectBar(p5);
-        drawUpperSign(p5);
-        pageTest.display(p5);
-        addFile.display(p5);
-        drawmainBar(p5);
-    }
+        if (pageType.equals("PDF")) {
+            pagePDF.display(p5);
+        } else if (pageType.equals("FLASHCARDS")) {
+            pageCard.display(p5);
+        } else if (pageType.equals("QUIZ")) {
+            pageTest.display(p5);
+        } else if (pageType.equals("LINKS")) {
+            pageLink.display(p5);
+        }
 
-    public void drawLinkPage(PApplet p5){
-        p5.background(246,224,181);
-        drawSubjectBar(p5);
-        drawUpperSign(p5);
-        pageLink.display(p5);
         addFile.display(p5);
         drawmainBar(p5);
     }
