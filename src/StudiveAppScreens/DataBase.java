@@ -1,5 +1,7 @@
 package StudiveAppScreens;
 
+import com.jogamp.common.util.IntObjectHashMap;
+
 import javax.xml.crypto.Data;
 import javax.xml.transform.Result;
 import java.sql.Connection;
@@ -65,15 +67,34 @@ public class DataBase {
         int n = getNumFilesTaula(nomTaula);
         String[] info = new String[n];
         String q = "SELECT "+ nomColumna +
-                   " FROM " + nomTaula +
-                   " ORDER BY " + nomColumna + "ASC";  // opcional si en ordre alfabètic
+                   " FROM " + nomTaula ;
+               //    " ORDER BY " + nomColumna + "ASC"; opcional si en ordre alfabètic
         System.out.println(q);
         try{
             ResultSet rs = query.executeQuery(q);
             int f = 0;
             while (rs.next()){ // fa getNext(), hasNext(), resetNext()...
-                info[f] = rs.getString(0);
+                info[f] = rs.getString(1);
                     f++;
+            }
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return info;
+    }
+
+    // retorna totes les caselles (files i columnes) d'una taula
+    public String[][] getInfoArray2D(){
+        int nf = getNumFilesTaula("asignatura");
+        String[][] info = new String[nf][2];
+        String q = "SELECT * FROM asignatura ORDER BY ID ASC"; //* = ID, COLOR
+        try{
+            ResultSet rs = query.executeQuery(q);
+            int f = 0;
+            while (rs.next()){
+                info[f][0] = rs.getString("ID"); //si és número String.valueof(); ** mirar si date tmb ho és
+                info[f][1] = rs.getString("COLOR");
             }
         }
         catch (Exception e){

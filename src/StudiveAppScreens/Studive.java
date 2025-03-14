@@ -21,6 +21,20 @@ public class Studive extends PApplet {
         db = new DataBase("admin", "12345", "studive");
         db.connect();
         db.getInfo("COLOR", "asignatura", "ID", "Mates");
+
+        String[] infoColumna = db.getInfoArray("documento", "ID");
+        printArray(infoColumna);
+
+        String[][] infoTaula = db.getInfoArray2D();
+        println("TAULA: ");
+        for (int i=0; i<infoTaula.length; i++) {
+            print(i+" ");
+            for (int j = 0; j < infoTaula[i].length; j++) {
+                System.out.print(infoTaula[i][j]+"\t");
+            }
+            println();
+        }
+
     }
 
     public void draw() {
