@@ -15,6 +15,7 @@ import StudiveAppFonts.Fonts;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+// ADD CERCADOR TO FIND THINGS EASIER
 public class GUI extends PApplet {
     public enum SCREENS {LOGINPAGE, HOMEPAGE, GENERALLESSONS, MAINLESSONS, EDITNAME, ADDSUBJECT,LINKSPAGE, PDFPAGE,
         CARDSPAGE, QUIZPAGE, NOLINK, NOPDF, NOCARD, NOQUIZ, ADDLINK, ADDPDF, ADDQUIZ, ADDCARD, DONELESSONS,
@@ -266,7 +267,6 @@ public class GUI extends PApplet {
     public void drawHomePage(PApplet p5){
         p5.background(246,224,181);
         drawGreetings(p5);
-        editName.display(p5);
         p5.textSize(MidTitleSize);
         p5.text("Lecciones hechas", 450, 180);
         p5.textSize(MidTitleSize);
@@ -275,17 +275,6 @@ public class GUI extends PApplet {
         mainfolder1.display(p5);
         mainforlder2.display(p5);
         drawmainBar(p5);
-    }
-    public void drawEditName(PApplet p5){
-        p5.background(246,224,181);
-        p5.fill(255);
-        p5.rect(600,290,700,400,15);
-        p5.fill(0);
-        p5.textSize(MidTitleSize);
-        p5.text("Nombre: ", 750, 420);
-        namechange.display(p5);
-        saveName.display(p5);
-        back.display(p5);
     }
     public void drawGeneralLessons(PApplet p5){
         p5.background(246,224,181);
@@ -359,7 +348,7 @@ public class GUI extends PApplet {
     }
     public void drawGreetings(PApplet p5){
         p5.textSize(TitleSize);
-        p5.text("Hola, X",125,FullScreenheight-980);
+        p5.text("Hola, " + username.getText(),125,FullScreenheight-980);
     }
 
     public void drawMainLessons(PApplet p5){

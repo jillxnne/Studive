@@ -68,4 +68,16 @@ public class Colors {
             }
         }
     }
+    public String getSelectedColorAsString(PApplet p5) {
+        if (selectedColor == -1) {
+            return "No color selected";
+        }
+
+        int col = colors[selectedColor];
+        float r = p5.red(col);
+        float g = p5.green(col);
+        float b = p5.blue(col);
+
+        return "R: " + (int) r + ", G: " + (int) g + ", B: " + (int) b;
+    }
 }

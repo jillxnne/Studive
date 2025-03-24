@@ -4,6 +4,7 @@ import static StudiveAppScreens.GUI.*;
 
 public class Studive extends PApplet {
     GUI gui;
+    String username, password = " ";
     String currentPage = "PDF";
     DataBase db;
     public static void main(String[] args) {
@@ -20,6 +21,7 @@ public class Studive extends PApplet {
         gui = new GUI(this);
         db = new DataBase("admin", "12345", "studive");
         db.connect();
+        /*
         db.getInfo("COLOR", "asignatura", "ID", "Mates");
 
         String[] infoColumna = db.getInfoArray("documento", "ID");
@@ -35,6 +37,50 @@ public class Studive extends PApplet {
             println();
         }
 
+        String[][] infoQuery = db.getInfoPregunta();
+        println("QUERY: ");
+        for (int i=0; i<infoQuery.length; i++) {
+            print(i+" ");
+            for (int j = 0; j < infoQuery[i].length; j++) {
+                System.out.print(infoQuery[i][j]+"\t");
+            }
+            println();
+        }
+
+        String[][] infoJoin = db.getInfoOfTwoRelatedTables();
+        println("JOIN: ");
+        for (int i=0; i<infoJoin.length; i++) {
+            print(i+" ");
+            for (int j = 0; j < infoJoin[i].length; j++) {
+                System.out.print(infoJoin[i][j]+"\t");
+            }
+            println();
+        }
+
+        String[][] search = db.preguntesCercador("ee");
+        println("SEARCH: ");
+        for (int i=0; i<search.length; i++) {
+            print(i+" ");
+            for (int j = 0; j < search[i].length; j++) {
+                System.out.print(search[i][j]+"\t");
+            }
+            println();
+        }
+        /* could be max, min, sum, avg, count,
+        int Max = db.getCalculationForSomething("xx");
+        System.out.println("SSS : " + Max);
+         */
+
+      /*  boolean nini = db.isUserOk("nini", "12345");
+        System.out.println(nini);
+
+        boolean lali = db.isUserOk("lali", "12345");
+        System.out.println(lali);
+
+        db.insertSomething("cling", "boom");
+        db.updateSomething("cla", "kree", "cling");
+        // db.deleteSomething("c");
+       */
     }
 
     public void draw() {
@@ -44,9 +90,6 @@ public class Studive extends PApplet {
                 break;
             case HOMEPAGE:
                 gui.drawHomePage(this);
-                break;
-            case EDITNAME:
-                gui.drawEditName(this);
                 break;
             case GENERALLESSONS:
                 gui.drawGeneralLessons(this);
@@ -118,16 +161,16 @@ public class Studive extends PApplet {
         gui.username.keyPressed(key,keyCode);
         gui.password.keyPressed(key,keyCode);
 
-        if (key =='1'){
+        if (key =='6'){
             gui.Default = SCREENS.NOPDF;
         }
-        if (key =='2'){
+        if (key =='7'){
             gui.Default = SCREENS.NOCARD;
         }
-        if (key =='3'){
+        if (key =='8'){
             gui.Default = SCREENS.NOQUIZ;
         }
-        if (key =='4'){
+        if (key =='9'){
             gui.Default = SCREENS.NOLINK;
         }
         if (key =='5'){
@@ -147,11 +190,14 @@ public class Studive extends PApplet {
             currentPage = "LINKS";  // Cambiar a la página de enlaces
         }
         if (gui.Default == SCREENS.LOGINPAGE){
-            if (gui.Login.mouseOverButton(this)){
-                gui.Default = SCREENS.HOMEPAGE;
-            }
             gui.password.isPressed(this);
             gui.username.isPressed(this);
+
+            String username = gui.username.getText();
+            String password = gui.password.getText();
+            if (gui.Login.mouseOverButton(this) && db.isUserOk(username, password)){
+                gui.Default = SCREENS.HOMEPAGE;
+            }
         }
 
         else if (gui.Default == SCREENS.HOMEPAGE) {
@@ -164,15 +210,6 @@ public class Studive extends PApplet {
             }
             if (gui.mainPageCard.checkMouseOver(this)) {
                 gui.Default = SCREENS.MAINLESSONS;
-            }
-            if (gui.editName.mouseOverButton(this)){
-                gui.Default = SCREENS.EDITNAME;
-            }
-
-        } else if(gui.Default == SCREENS.EDITNAME){
-            gui.namechange.isPressed(this);
-            if (gui.back.mouseOverButton(this)){
-                gui.Default = SCREENS.HOMEPAGE;
             }
 
         } else if (gui.Default == SCREENS.GENERALLESSONS) {
@@ -193,7 +230,9 @@ public class Studive extends PApplet {
 
         } else if (gui.Default == SCREENS.ADDSUBJECT){
             gui.subjecttitle.isPressed(this);
+            String subjectitle = gui.subjecttitle.getText();
             gui.colorss.checkMouseOver(this,800,520,300);
+            String color = gui.colorss.getSelectedColorAsString(this);
             if (gui.bigback.mouseOverButton(this)){
                 gui.Default=SCREENS.GENERALLESSONS;
             }

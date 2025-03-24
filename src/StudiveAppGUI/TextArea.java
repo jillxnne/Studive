@@ -26,6 +26,8 @@ public class TextArea {
         this.selectedColor = p5.color(190, 190, 60);
         this.borderColor = p5.color(30, 30, 30);
     }
+
+    public String getText(){ return this.text; }
     public void display(PApplet p5) {
         p5.pushStyle();
         if (selected) {

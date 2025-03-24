@@ -95,9 +95,158 @@ public class DataBase {
             while (rs.next()){
                 info[f][0] = rs.getString("ID"); //si és número String.valueof(); ** mirar si date tmb ho és
                 info[f][1] = rs.getString("COLOR");
+                f++;
             }
         }
         catch (Exception e){
+            System.out.println(e);
+        }
+        return info;
+    }
+
+    public int getNumFilesMatchQuery(String q){
+        try{
+            ResultSet rs = query.executeQuery(q);
+            rs.next();
+            return rs.getInt("num");
+        } catch(Exception e){
+            System.out.println(e);
+        }
+        return 0;
+    }
+
+    // retorn de filtratge de una taula
+    public String [][] getInfoPregunta(){
+        String qNF = "SELECT COUNT(*) AS num FROM opcion WHERE CORRECTO = 'no' ";
+        int nf = getNumFilesMatchQuery(qNF);
+        String[][] info = new String[nf][4];
+        String q = " SELECT * FROM opcion WHERE CORRECTO = 'no' "; // * perquè s'ha de seleccionar tot 
+        System.out.println(q);
+        try{
+           ResultSet rs = query.executeQuery(q);
+           int n = 0;
+           while (rs.next()){
+               info[n][0] = rs.getString("ID");
+               info[n][1] = rs.getString("CORRECTO");
+               info[n][2] = String.valueOf(rs.getInt("NUMERO"));
+               info[n][3] = rs.getString("PREGUNTA_ID");
+               n++;
+           }
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return info;
+    }
+
+    public String[][] getInfoOfTwoRelatedTables(){
+        String qNF = "SELECT COUNT(*) AS num FROM opcion o, pregunta p WHERE p.ID = o.PREGUNTA_ID";
+        int nf = getNumFilesMatchQuery(qNF);
+        String[][] info = new String[nf][2];
+        String q = " SELECT p.ENUNCIADO, o.ID FROM opcion o, pregunta p WHERE p.ID = o.PREGUNTA_ID ";
+        System.out.println(q);
+        try{
+            ResultSet rs = query.executeQuery(q);
+            int n = 0;
+            while (rs.next()){
+                info[n][0] = rs.getString("p.ENUNCIADO");
+                info[n][1] = rs.getString("o.ID");
+                n++;
+            }
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return info;
+    }
+
+    public int getCalculationForSomething(String nomUsuari){
+        String q = "SELECT XX AS XX FROM SSS WHERE XXX = '" + nomUsuari+" ' ";
+        System.out.println(q);
+        try{
+            ResultSet rs = query.executeQuery(q);
+            rs.next();
+            return rs.getInt("XX");
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return 0;
+    }
+
+    // retorna true if user and password is in table
+    public boolean isUserOk(String username, String password){
+        String q = "SELECT COUNT(*) AS n" +
+                " FROM usuario "+
+                " WHERE ID='" + username + "' AND PASSWORD='" + password + "' ";
+        System.out.println(q);
+        try{
+            ResultSet rs = query.executeQuery(q);
+            rs.next();
+            return rs.getInt("n")==1;
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    // insertion (user)
+    // execute si no ha de retornar, executeQuery si ha de retornar
+    public void insertSomething(String username, String password){
+        String q = "INSERT INTO usuario (ID, PASSWORD) VALUES ('"+username+"', '"+password+"')";
+        System.out.println(q);
+        try{
+            query.execute(q);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    // delete
+    public void deleteSomething (String username){
+        String q = "DELETE FROM usuario WHERE SUBSTR(ID, 1,1) = '"+username+"' ";
+        // DELETE FROM usuario --> delete everything, DELETE FROM usuario WHERE ID = .. --> una fila
+        System.out.println(q);
+        try{
+            query.execute(q);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    // update
+    public void updateSomething (String username, String oldUsername){
+        String q = "UPDATE usuario SET ID = '"+username+"' WHERE ID ='"+oldUsername+"' ";
+        System.out.println(q);
+        try{
+            query.execute(q);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    // Search : SELECT usuario FROM  xx WHERE xx LIKE
+    public String[][] preguntesCercador(String clauCerca){
+
+        String qNF = "SELECT COUNT(*) AS num FROM usuario WHERE ID LIKE '%"+ clauCerca+"%'";
+        int nf = getNumFilesMatchQuery(qNF);
+        String[][] info = new String[nf][2];
+        String q = "SELECT ID, PASSWORD FROM usuario WHERE ID LIKE '%"+ clauCerca+"%'";
+        System.out.println(q);
+        try{
+            ResultSet rs = query.executeQuery(q);
+            int n=0;
+            while(rs.next()){
+                info[n][0] = rs.getString("ID");
+                info[n][1] = rs.getString("PASSWORD");
+                n++;
+            }
+        }
+        catch(Exception e){
             System.out.println(e);
         }
         return info;
