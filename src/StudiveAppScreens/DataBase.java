@@ -2,6 +2,7 @@ package StudiveAppScreens;
 
 import com.jogamp.common.util.IntObjectHashMap;
 
+import javax.swing.text.Style;
 import javax.xml.crypto.Data;
 import javax.xml.transform.Result;
 import java.sql.Connection;
@@ -174,25 +175,46 @@ public class DataBase {
         return 0;
     }
 
-    // retorna true if user and password is in table
-    public boolean isUserOk(String username, String password){
-        String q = "SELECT COUNT(*) AS n" +
-                " FROM usuario "+
-                " WHERE ID='" + username + "' AND PASSWORD='" + password + "' ";
+    // ------------------------------------------ * SELECTS * ------------------------------------------- //
+
+    public String getSubjectForLesson (String subject){
+        String q = "SELECT ID from asignatura WHERE ID = '"+subject+"' ";
+    }
+
+
+    // --------------------------------------- * VERIFICATIONS * --------------------------------------- //
+    public boolean Login(String username, String password){
+        String q = "SELECT COUNT(*) AS n FROM usuario " +
+                   " WHERE ID= '"+username+"' AND PASSWORD = '"+password+"'";
         System.out.println(q);
-        try{
+        try {
             ResultSet rs = query.executeQuery(q);
             rs.next();
-            return rs.getInt("n")==1;
         }
-        catch(Exception e){
+        catch (Exception e){
             System.out.println(e);
         }
         return false;
     }
-
-    // insertion (user)
     // execute si no ha de retornar, executeQuery si ha de retornar
+
+    // --------------------------------------- * INSERTS * --------------------------------------- //
+    public void insertSubject (String subject, String color){
+        String q = "INSERT INTO asignatura (ID, COLOR) VALUES ('"+subject+"', '"+color+"')";
+        System.out.println(q);
+        try{
+            query.execute(q);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public void insertDocument (String ID, String descripcion, String URL, String Subject, String TypeOfDocs){
+        String q = "INSERT INTO documento (ID, DESCRIPCION, URL, ASIGNATURA_ID, TIPODOCUMENTO_ID VALUES" +
+                " ()";
+    }
+
     public void insertSomething(String username, String password){
         String q = "INSERT INTO usuario (ID, PASSWORD) VALUES ('"+username+"', '"+password+"')";
         System.out.println(q);

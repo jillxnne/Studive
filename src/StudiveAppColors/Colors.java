@@ -3,7 +3,7 @@ package StudiveAppColors;
 import processing.core.PApplet;
 
 public class Colors {
-
+    String colorname = " ";
     int[] colors;
     int selectedColor = -1;  // Variable para almacenar el color seleccionado
 
@@ -13,11 +13,12 @@ public class Colors {
 
     void setColors(PApplet p5) {
         this.colors = new int[5];
-        this.colors[0] = p5.color(102, 84, 94);
-        this.colors[1] = p5.color(163, 145, 147);
-        this.colors[2] = p5.color(170, 111, 115);
-        this.colors[3] = p5.color(238, 169, 144);
-        this.colors[4] = p5.color(246, 224, 181);
+        this.colors[0] = p5.color(102, 84, 94); // one
+        this.colors[1] = p5.color(163, 145, 147); // two
+        this.colors[2] = p5.color(170, 111, 115); // three
+        this.colors[3] = p5.color(238, 169, 144); // four
+        this.colors[4] = p5.color(246, 224, 181); // five
+
     }
 
     int getNumColors() {
@@ -69,15 +70,27 @@ public class Colors {
         }
     }
     public String getSelectedColorAsString(PApplet p5) {
-        if (selectedColor == -1) {
-            return "No color selected";
+        switch (selectedColor) {
+            case -1:
+                colorname = "";
+                break;
+            case 1:
+                colorname = "one";
+                break;
+            case 2:
+                colorname = "two";
+                break;
+            case 3:
+                colorname = "three";
+                break;
+            case 4:
+                colorname = "four";
+                break;
+            case 5:
+                colorname = "five";
+                break;
         }
-
-        int col = colors[selectedColor];
-        float r = p5.red(col);
-        float g = p5.green(col);
-        float b = p5.blue(col);
-
-        return "R: " + (int) r + ", G: " + (int) g + ", B: " + (int) b;
+        return colorname;
     }
+
 }

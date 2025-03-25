@@ -15,8 +15,8 @@ import StudiveAppFonts.Fonts;
 import processing.core.PApplet;
 import processing.core.PImage;
 
-// ADD CERCADOR TO FIND THINGS EASIER
 public class GUI extends PApplet {
+
     public enum SCREENS {LOGINPAGE, HOMEPAGE, GENERALLESSONS, MAINLESSONS, EDITNAME, ADDSUBJECT,LINKSPAGE, PDFPAGE,
         CARDSPAGE, QUIZPAGE, NOLINK, NOPDF, NOCARD, NOQUIZ, ADDLINK, ADDPDF, ADDQUIZ, ADDCARD, DONELESSONS,
         NOTDONELESSONS, GENERALSTATISTICS, MAINSTATISTICS};
@@ -37,6 +37,7 @@ public class GUI extends PApplet {
     Colors colorss;
     Fonts fonts;
 
+    // ----------------------------------- * INFORMACIÓN TABLAS * ----------------------------------- //
     String[][] info = {
             {"Card Title 1", "cards", "This is the description for Card 1"},
             {"Card Title 2", "pdf", "This is the description for Card 2"},
@@ -87,9 +88,9 @@ public class GUI extends PApplet {
     int[] colors = {color(0), color(255,255,255), color(100,100,100)};
     String[] lectionType = {"PDF", "TEST","FLASHCARDS","LINK"};
 
+
     public GUI(PApplet p5){
         Default  = SCREENS.HOMEPAGE;
-
         this.setImage(p5);
         setImageButtons(p5);
         setTextFields(p5);

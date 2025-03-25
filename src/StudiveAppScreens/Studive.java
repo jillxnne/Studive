@@ -195,7 +195,7 @@ public class Studive extends PApplet {
 
             String username = gui.username.getText();
             String password = gui.password.getText();
-            if (gui.Login.mouseOverButton(this) && db.isUserOk(username, password)){
+            if (gui.Login.mouseOverButton(this) && db.Login(username, password)){
                 gui.Default = SCREENS.HOMEPAGE;
             }
         }
@@ -230,9 +230,14 @@ public class Studive extends PApplet {
 
         } else if (gui.Default == SCREENS.ADDSUBJECT){
             gui.subjecttitle.isPressed(this);
-            String subjectitle = gui.subjecttitle.getText();
             gui.colorss.checkMouseOver(this,800,520,300);
+            String titleSubject = gui.subjecttitle.getText();
             String color = gui.colorss.getSelectedColorAsString(this);
+
+            if (!titleSubject.equals("") && !color.equals("")){
+                db.insertSubject(titleSubject,color);
+            }
+
             if (gui.bigback.mouseOverButton(this)){
                 gui.Default=SCREENS.GENERALLESSONS;
             }
