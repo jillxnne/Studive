@@ -12,11 +12,9 @@ import StudiveAppGUI.ImageButtons;
 import StudiveAppGUI.TextArea;
 import StudiveAppColors.Colors;
 import StudiveAppFonts.Fonts;
-import processing.core.PApplet;
 import processing.core.PImage;
 
 public class GUI extends PApplet {
-
     public enum SCREENS {LOGINPAGE, HOMEPAGE, GENERALLESSONS, MAINLESSONS, EDITNAME, ADDSUBJECT,LINKSPAGE, PDFPAGE,
         CARDSPAGE, QUIZPAGE, NOLINK, NOPDF, NOCARD, NOQUIZ, ADDLINK, ADDPDF, ADDQUIZ, ADDCARD, DONELESSONS,
         NOTDONELESSONS, GENERALSTATISTICS, MAINSTATISTICS};
@@ -37,7 +35,11 @@ public class GUI extends PApplet {
     Colors colorss;
     Fonts fonts;
 
-    // ----------------------------------- * INFORMACIÓN TABLAS * ----------------------------------- //
+
+    // ----------------------------------- * TABLE INFORMATION * ----------------------------------- //
+    String[][] subjectsInfo; // Información sobre las asignaturas que habrá
+    String[][] homePageLessonsInfo; // hacer que solo se vean los tres primeros
+
     String[][] info = {
             {"Card Title 1", "cards", "This is the description for Card 1"},
             {"Card Title 2", "pdf", "This is the description for Card 2"},
@@ -48,17 +50,7 @@ public class GUI extends PApplet {
             {"Card Title 3", "link", "This is the description for Card 3"},
             {"Card Title 4", "test", "This is the description for Card 4"}
     };
-    String[][] info1 = {
-            {"info"},
-            {"mates"},
-            {"historia"},
-            {"info"},
-            {"mates"},
-            {"historia"},
-            {"info"},
-            {"mates"},
-            {"historia"}
-    };
+
     String[][] cards = {
             {"Title 1", "cards", "Description"},
             {"Title 2", "cards", "Description"},
@@ -88,8 +80,8 @@ public class GUI extends PApplet {
     int[] colors = {color(0), color(255,255,255), color(100,100,100)};
     String[] lectionType = {"PDF", "TEST","FLASHCARDS","LINK"};
 
-
-    public GUI(PApplet p5){
+    public GUI(PApplet p5, String[][] subjectsInfo){
+        this.subjectsInfo = subjectsInfo;
         Default  = SCREENS.HOMEPAGE;
         this.setImage(p5);
         setImageButtons(p5);
@@ -194,7 +186,7 @@ public class GUI extends PApplet {
     public void setPagedSubjects(){
         mainPageLection = new PagedSubject(4);
         mainPageLection.setDimensions(535,160, RecentLecturewidth+300, 700);
-        mainPageLection.setData(info1);
+        mainPageLection.setData(subjectsInfo);
         mainPageLection.setSubjects(mainfolderIcon);
     }
     public void setCheckBoxs(PApplet p5){
@@ -254,6 +246,7 @@ public class GUI extends PApplet {
         loginIcon = p5.loadImage("data/foldermain.png");
     }
 
+    // ----------------------------------- * LOGIN PAGE * ----------------------------------- //
     public void drawLoginPage(PApplet p5){
         p5.background(246,224,181);
         p5.image(loginIcon, 795,200,300,300);
@@ -265,6 +258,8 @@ public class GUI extends PApplet {
         password.display(p5);
         Login.display(p5);
     }
+
+    // ----------------------------------- * HOME PAGE * ----------------------------------- //
     public void drawHomePage(PApplet p5){
         p5.background(246,224,181);
         drawGreetings(p5);
@@ -277,6 +272,13 @@ public class GUI extends PApplet {
         mainforlder2.display(p5);
         drawmainBar(p5);
     }
+
+    // ----------------------------------- * SUBJECT PAGE  * ----------------------------------- //
+    // ----------------------------------- * (NOT) DONE LESSONS * ----------------------------------- //
+    // ----------------------------------- * INFO OF LESSONS * ----------------------------------- //
+    // ----------------------------------- * STATISTICS * ----------------------------------- //
+
+
     public void drawGeneralLessons(PApplet p5){
         p5.background(246,224,181);
         drawUpperSign(p5);

@@ -42,7 +42,7 @@ public class PagedSubject {
             for (int i = firstSubjectPage; i <= lastSubjectPage; i++) {
                 if (i < subjects.length) {
                     // Crear el Subject con el título
-                    subjects[i] = new Subject(subjectsData[i][0]);
+                    subjects[i] = new Subject(subjectsData[i][0], subjectsData[i][1]);
                     subjects[i].setDimensions(x, ySubject, w, hSubject, b);
 
                     // Asignar la misma imagen a todos los subjects
@@ -91,6 +91,12 @@ public class PagedSubject {
         if (!selected) {
             selectedCard = -1;
         }
+    }
+    public String getSelectedSubjectTitle() {
+        if(selectedCard >= 0 && selectedCard < subjects.length) {
+            return subjects[selectedCard].title;
+        }
+        return null;
     }
 
     public boolean checkMouseOver(PApplet p5) {

@@ -4,15 +4,16 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 public class Subject {
-    String title;  // Solo mantenemos el título
+    String title, color;  // Solo mantenemos el título
     PImage img;    // Imagen para la tarjeta
 
     // Dimensiones de la tarjeta
     float x, y, w, h, b;
 
     // Constructor
-    public Subject(String title) {
+    public Subject(String title, String color) {
         this.title = title;
+        this.color = color;
     }
 
     public void setDimensions(float x, float y, float w, float h, float b) {
@@ -30,14 +31,25 @@ public class Subject {
     public void display(PApplet p5) {
         p5.pushStyle();
 
-        if (title.equals("info")) {
-            p5.fill(102, 84, 94);
-        } else if (title.equals("mates")) {
-            p5.fill(238, 169, 144);
-        } else if (title.equals("historia")) {
-            p5.fill(170, 111, 115);
-        } else {
-            p5.fill(220);
+        switch (color) {
+            case "one":
+                p5.fill(102, 84, 94);
+                break;
+            case "two":
+                p5.fill(163, 145, 147);
+                break;
+            case "three":
+                p5.fill(170, 111, 115);
+                break;
+            case "four":
+                p5.fill(238, 169, 144);
+                break;
+            case "five":
+                p5.fill(246, 224, 181);
+                break;
+            case " ":
+                p5.fill(220);
+                break;
         }
 
         p5.rect(x, y, w, h, b / 2);

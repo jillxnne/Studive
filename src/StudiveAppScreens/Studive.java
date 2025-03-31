@@ -4,7 +4,8 @@ import static StudiveAppScreens.GUI.*;
 
 public class Studive extends PApplet {
     GUI gui;
-    String username, password = " ";
+    String[][] subjectsInfo;
+    String typeOfDoc, subjectName;
     String currentPage = "PDF";
     DataBase db;
     public static void main(String[] args) {
@@ -18,69 +19,12 @@ public class Studive extends PApplet {
 
     public void setup() {
         background(255);
-        gui = new GUI(this);
         db = new DataBase("admin", "12345", "studive");
         db.connect();
-        /*
-        db.getInfo("COLOR", "asignatura", "ID", "Mates");
 
-        String[] infoColumna = db.getInfoArray("documento", "ID");
-        printArray(infoColumna);
+        subjectsInfo = db.getSubjectsInfo();
+        gui = new GUI(this, subjectsInfo);
 
-        String[][] infoTaula = db.getInfoArray2D();
-        println("TAULA: ");
-        for (int i=0; i<infoTaula.length; i++) {
-            print(i+" ");
-            for (int j = 0; j < infoTaula[i].length; j++) {
-                System.out.print(infoTaula[i][j]+"\t");
-            }
-            println();
-        }
-
-        String[][] infoQuery = db.getInfoPregunta();
-        println("QUERY: ");
-        for (int i=0; i<infoQuery.length; i++) {
-            print(i+" ");
-            for (int j = 0; j < infoQuery[i].length; j++) {
-                System.out.print(infoQuery[i][j]+"\t");
-            }
-            println();
-        }
-
-        String[][] infoJoin = db.getInfoOfTwoRelatedTables();
-        println("JOIN: ");
-        for (int i=0; i<infoJoin.length; i++) {
-            print(i+" ");
-            for (int j = 0; j < infoJoin[i].length; j++) {
-                System.out.print(infoJoin[i][j]+"\t");
-            }
-            println();
-        }
-
-        String[][] search = db.preguntesCercador("ee");
-        println("SEARCH: ");
-        for (int i=0; i<search.length; i++) {
-            print(i+" ");
-            for (int j = 0; j < search[i].length; j++) {
-                System.out.print(search[i][j]+"\t");
-            }
-            println();
-        }
-        /* could be max, min, sum, avg, count,
-        int Max = db.getCalculationForSomething("xx");
-        System.out.println("SSS : " + Max);
-         */
-
-      /*  boolean nini = db.isUserOk("nini", "12345");
-        System.out.println(nini);
-
-        boolean lali = db.isUserOk("lali", "12345");
-        System.out.println(lali);
-
-        db.insertSomething("cling", "boom");
-        db.updateSomething("cla", "kree", "cling");
-        // db.deleteSomething("c");
-       */
     }
 
     public void draw() {
@@ -173,7 +117,7 @@ public class Studive extends PApplet {
         if (key =='9'){
             gui.Default = SCREENS.NOLINK;
         }
-        if (key =='5'){
+        if (key =='0'){
             gui.Default = SCREENS.LOGINPAGE;
         }
     }
@@ -226,6 +170,7 @@ public class Studive extends PApplet {
                 gui.mainPageLection.prevPage();
             } else {
                 gui.mainPageLection.checkSubjectSelection(this);
+                subjectName = gui.mainPageLection.getSelectedSubjectTitle();
             }
 
         } else if (gui.Default == SCREENS.ADDSUBJECT){
@@ -248,6 +193,7 @@ public class Studive extends PApplet {
                 gui.Default = SCREENS.MAINLESSONS;
             }
             if (gui.addFile.mouseOverButton(this)){
+                typeOfDoc = "PDF";
                 gui.Default=SCREENS.ADDPDF;
             }
 
@@ -307,8 +253,14 @@ public class Studive extends PApplet {
 
         } else if (gui.Default == SCREENS.ADDPDF){
             gui.title0.isPressed(this);
+            String title = gui.title0.getText();
             gui.description0.isPressed(this);
+            String description = gui.description0.getText();
+            String URL = " ";
             upperBarFunctions(this);
+            if (gui.create.mouseOverButton(this)){
+                db.insertDocument(title, description,URL,subjectName,typeOfDoc);
+            }
         if (gui.bigback1.mouseOverButton(this)){
             gui.Default=SCREENS.PDFPAGE;
         }

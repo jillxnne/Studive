@@ -1,14 +1,6 @@
 package StudiveAppScreens;
 
-import com.jogamp.common.util.IntObjectHashMap;
-
-import javax.swing.text.Style;
-import javax.xml.crypto.Data;
-import javax.xml.transform.Result;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DataBase {
     Connection c;
@@ -22,6 +14,7 @@ public class DataBase {
         this.databaseName = databaseName;
     }
 
+    // ----------------------------------------- * CONNECTION * ------------------------------------------ //
     public void connect(){
         try{
             //Class.forName("com.mysql.jdbc.Driver");
@@ -34,243 +27,330 @@ public class DataBase {
         }
     }
 
-    // retorna la informació d'una casella
-    public String getInfo(String nomColumna, String nomTaula, String key, String id){
+    // ------------------------------------------ * SELECTS * ------------------------------------------- //
+
+
+    // --------------------------------------- * VERIFICATIONS * --------------------------------------- //
+    public boolean Login(String username, String password){
+        String q = "SELECT COUNT(*) AS n FROM usuario "+
+                   " WHERE ID='"+username+"' AND PASSWORD='"+password+"' ";
+        System.out.println(q);
         try{
-            String q =  "SELECT "+ nomColumna +
-                        " FROM " + nomTaula +
-                        " WHERE "+key+" = '"+id+"' ";
+            ResultSet rs = query.executeQuery(q);
+            rs.next();
+            return rs.getInt("n")==1;
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    // --------------------------------------- * INSERTS * --------------------------------------- //
+    public void insertSubject (String subject, String color){
+        String q = "INSERT INTO asignatura (ID, COLOR) " +
+                   " VALUES ('"+subject+"', '"+color+"')";
+        System.out.println(q);
+        try{
+            query.execute(q);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public void insertDocument (String title, String description, String URL, String subjectName, String docType){
+        try{
+            String subjectId = getSubjectId(subjectName);
+            String docTypeId = getTypeOfDocId(docType);
+
+            if(subjectId == null || docTypeId == null) {
+                System.out.println("not found");
+            }
+            String q = "INSERT INTO documento (ID, DESCRIPCION, URL, ASIGNATURA_ID, TIPODOCUMENTO_ID)" +
+                    " VALUES ('"+title+"', '"+description+"','"+URL+"', '"+subjectId+"', '"+docTypeId+"')";
             System.out.println(q);
-            ResultSet rs = query.executeQuery(q);
-            rs.next();
-            return rs.getString(nomColumna);
-        } catch(Exception e){
+            query.execute(q);
+        }
+        catch (Exception e){
             System.out.println(e);
         }
-        return "";
     }
-
-    // retorna el número total de files d'una taula
-    public int getNumFilesTaula(String nomTaula){
-        String q = "SELECT COUNT(*) AS num FROM "+ nomTaula;
+    public void insertTest (String title, String description, String subjectName, String testType){
         try{
-            ResultSet rs = query.executeQuery(q);
-            rs.next();
-            return rs.getInt("num");
-        } catch(Exception e){
-            System.out.println(e);
-        }
-        return 0;
-    }
+            String subjectId = getSubjectId(subjectName);
+            String testTypeId = getTypeOfTestId(testType);
 
-    // retorna totes les caselles d'una columna
-    public String[] getInfoArray(String nomTaula, String nomColumna){
-        int n = getNumFilesTaula(nomTaula);
-        String[] info = new String[n];
-        String q = "SELECT "+ nomColumna +
-                   " FROM " + nomTaula ;
-               //    " ORDER BY " + nomColumna + "ASC"; opcional si en ordre alfabètic
-        System.out.println(q);
-        try{
-            ResultSet rs = query.executeQuery(q);
-            int f = 0;
-            while (rs.next()){ // fa getNext(), hasNext(), resetNext()...
-                info[f] = rs.getString(1);
-                    f++;
+            if(subjectId == null || testTypeId == null) {
+                System.out.println("not found");
             }
+            String q = "INSERT INTO prueba (ID, DESCRIPCION, DONE, ASIGNATURA_ID, TIPODOCUMENTO_ID)" +
+                    " VALUES ('"+title+"', '"+description+"','0','"+subjectId+"', '"+testTypeId+"')";
+            System.out.println(q);
+            query.execute(q);
         }
         catch (Exception e){
             System.out.println(e);
         }
-        return info;
     }
 
-    // retorna totes les caselles (files i columnes) d'una taula
-    public String[][] getInfoArray2D(){
-        int nf = getNumFilesTaula("asignatura");
-        String[][] info = new String[nf][2];
-        String q = "SELECT * FROM asignatura ORDER BY ID ASC"; //* = ID, COLOR
-        try{
+    // --------------------------------------- * GET INFO * --------------------------------------- //
+    public String[][] getSubjectsInfo() {
+        int numRows = getNumRows("asignatura");
+        String [][] subjectInfo = new String [numRows][2];
+        String q = "SELECT * FROM asignatura";
+        try {
             ResultSet rs = query.executeQuery(q);
-            int f = 0;
-            while (rs.next()){
-                info[f][0] = rs.getString("ID"); //si és número String.valueof(); ** mirar si date tmb ho és
-                info[f][1] = rs.getString("COLOR");
-                f++;
+            int rows = 0;
+            while (rs.next()) {
+                subjectInfo[rows][0] = rs.getString("ID");
+                subjectInfo[rows][1] = rs.getString("COLOR");
+                rows++;
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
-        return info;
+        return subjectInfo;
     }
 
-    public int getNumFilesMatchQuery(String q){
+    public String getSubjectId(String subjectName) {
+        String q = "SELECT ID FROM asignatura WHERE ID = '" + subjectName + "'";
+        try {
+            ResultSet rs = query.executeQuery(q);
+            if (rs.next()) {
+                return rs.getString("ID");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+    public String getTypeOfDocId(String typeOfDoc) {
+        String q = "SELECT ID FROM tipodocumento WHERE ID = '" + typeOfDoc + "'";
+        try {
+            ResultSet rs = query.executeQuery(q);
+            if (rs.next()) {
+                return rs.getString("ID");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+    public String getTypeOfTestId(String typeOfTest) {
+        String q = "SELECT ID FROM tipoprueba WHERE ID = '" + typeOfTest + "'";
+        try {
+            ResultSet rs = query.executeQuery(q);
+            if (rs.next()) {
+                return rs.getString("ID");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    public String[][] getSpecificInfoAboutTestOrDoc(String typeOfDoc, String title){
+        int numRows = 0;
+        String q = null;
+
+        String docID = getTypeOfDocId(typeOfDoc);
+        if (docID == null){
+            numRows = getNumRows("prueba");
+            q = "SELECT ID, TIPOPRUEBA_ID AS DOCTYPE, DESCRIPCION FROM prueba WHERE ID = '"+title+"' ";
+        }
+        else {
+            numRows = getNumRows("documento");
+            q = "SELECT ID, TIPODOCUMENTO_ID AS DOCTYPE, DESCRIPCION FROM documento WHERE ID = '"+title+"' ";
+        }
+        String[][] Info = new String[numRows][];
+
         try{
             ResultSet rs = query.executeQuery(q);
-            rs.next();
-            return rs.getInt("num");
-        } catch(Exception e){
+            int rows = 0;
+            while (rs.next()) {
+                Info[rows][0] = rs.getString("ID");
+                Info[rows][1] = rs.getString("DOCTYPE");
+                Info[rows][2] = rs.getString("DESCRIPCION");
+                rows++;
+            }
+        } catch (Exception e){
             System.out.println(e);
         }
-        return 0;
+        return Info;
     }
 
-    // retorn de filtratge de una taula
-    public String [][] getInfoPregunta(){
-        String qNF = "SELECT COUNT(*) AS num FROM opcion WHERE CORRECTO = 'no' ";
-        int nf = getNumFilesMatchQuery(qNF);
-        String[][] info = new String[nf][4];
-        String q = " SELECT * FROM opcion WHERE CORRECTO = 'no' "; // * perquè s'ha de seleccionar tot 
-        System.out.println(q);
-        try{
-           ResultSet rs = query.executeQuery(q);
-           int n = 0;
-           while (rs.next()){
-               info[n][0] = rs.getString("ID");
-               info[n][1] = rs.getString("CORRECTO");
-               info[n][2] = String.valueOf(rs.getInt("NUMERO"));
-               info[n][3] = rs.getString("PREGUNTA_ID");
-               n++;
-           }
-        }
-        catch (Exception e){
+    public String getDescription (String typeofDoc, String titleOfDoc){
+        String q = "SELECT DESCRIPCION FROM '"+typeofDoc+"' WHERE ID = '"+titleOfDoc+"'";
+        try {
+            ResultSet rs = query.executeQuery(q);
+            if (rs.next()) {
+                return rs.getString("DESCRIPCION");
+            }
+        } catch (Exception e) {
             System.out.println(e);
         }
-        return info;
+        return null;
     }
-
-    public String[][] getInfoOfTwoRelatedTables(){
-        String qNF = "SELECT COUNT(*) AS num FROM opcion o, pregunta p WHERE p.ID = o.PREGUNTA_ID";
-        int nf = getNumFilesMatchQuery(qNF);
-        String[][] info = new String[nf][2];
-        String q = " SELECT p.ENUNCIADO, o.ID FROM opcion o, pregunta p WHERE p.ID = o.PREGUNTA_ID ";
+    public String getURL (String typeofDoc, String titleOfDoc){
+        String q = "SELECT URL FROM '"+typeofDoc+"' WHERE ID = '"+titleOfDoc+"'";
+        try {
+            ResultSet rs = query.executeQuery(q);
+            if (rs.next()) {
+                return rs.getString("URL");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+    public String getTitle (String typeofDoc, String titleOfDoc){
+        String q = "SELECT ID FROM '"+typeofDoc+"' WHERE ID = '"+titleOfDoc+"'";
+        try {
+            ResultSet rs = query.executeQuery(q);
+            if (rs.next()) {
+                return rs.getString("ID");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+    public String getFecha (String typeofDoc, String titleOfDoc){
+        String q = "SELECT FECHA FROM '"+typeofDoc+"' WHERE ID = '"+titleOfDoc+"'";
+        try {
+            ResultSet rs = query.executeQuery(q);
+            if (rs.next()) {
+                return rs.getString("FECHA");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+    public String[][] getTotalOfDoneTests (String doneOrNotDone){
+        String stateOfTest = " ";
+        if (doneOrNotDone == "done"){
+            stateOfTest = "1";
+        }
+        String order = "SELECT ID, TIPOPRUEBA_ID, DESCRIPCION AS num FROM prueba WHERE DONE = '"+stateOfTest+"' ";
+        int numFilesThatMatchQuery = getNumFilesThatMatchQuery(order);
+        String[][] totalOfSaidState = new String[numFilesThatMatchQuery][3];
+        String q = " SELECT ID, TIPOPRUEBA_ID, DESCRIPCION FROM prueba WHERE DONE = '"+stateOfTest+"' ";
         System.out.println(q);
         try{
             ResultSet rs = query.executeQuery(q);
             int n = 0;
             while (rs.next()){
-                info[n][0] = rs.getString("p.ENUNCIADO");
-                info[n][1] = rs.getString("o.ID");
+                totalOfSaidState[n][0] = rs.getString("ID");
+                totalOfSaidState[n][1] = rs.getString("TIPOPRUEBA_ID");
+                totalOfSaidState[n][2] = String.valueOf(rs.getInt("DESCRIPCION"));
                 n++;
             }
         }
         catch (Exception e){
             System.out.println(e);
         }
-        return info;
+        return totalOfSaidState;
     }
 
-    public int getCalculationForSomething(String nomUsuari){
-        String q = "SELECT XX AS XX FROM SSS WHERE XXX = '" + nomUsuari+" ' ";
-        System.out.println(q);
+
+    // ----------------------------------------- * UPDATES * ----------------------------------------- //
+    public void updateDone(String typeOfDoc, String title){
+        String docType = getTypeOfDocId(typeOfDoc);
+        if (docType != null){
+            docType = "prueba";
+            String date = getFecha(docType,title);
+            if (date != null){
+                try{
+                    String q = "UPDATE '"+docType+"' SET DONE = '1' WHERE ID = '"+title+"' ";
+                    query.executeQuery(q);
+                }
+                catch(Exception e){
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+
+    public void updateInfo(String typeOfDoc, String title, String description, String fechaOrURL){
+        String q = null;
+        String docType = getTypeOfDocId(typeOfDoc);
+
+        if (docType != null){
+            docType = "documento";
+            String oldTitle = getTitle(docType, title);
+            String oldDescription = getDescription(docType, title);
+            String oldURL = getURL(docType, title);
+
+            try {
+                if (title != null && description == null && fechaOrURL == null) {
+                    q = "UPDATE documento SET ID = '" + title + "' WHERE ID = '" + oldTitle + "' ";
+                } else if (title == null && description != null && fechaOrURL == null) {
+                    q = "UPDATE documento SET DESCRIPCION = '" + description + "' WHERE DESCRIPCION = '" + oldDescription + "'";
+                } else if (title == null && description == null && fechaOrURL != null) {
+                    q = "UPDATE documento SET URL = '"+fechaOrURL+"' WHERE URL = '"+oldURL+"'";
+                }
+                else {
+                    q = "UPDATE documento SET ID = '"+title+"' WHERE ID ='"+oldTitle+"', " +
+                        "SET DESCRIPCION = '"+description+"' WHERE DESCRIPCION = '"+oldDescription+"', " +
+                        "SET URL = '"+fechaOrURL+"' WHERE URL = '"+oldURL+"'";
+                }
+                query.execute(q);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        else {
+            docType = "prueba";
+            String oldTitle = getTitle(docType, title);
+            String oldDescription = getDescription(docType, title);
+            String oldFecha = getFecha(docType, title);
+
+            try {
+                if (title != null && description == null && fechaOrURL == null) {
+                    q = "UPDATE prueba SET ID = '" + title + "' WHERE ID = '" + oldTitle + "' ";
+                } else if (title == null && description != null && fechaOrURL == null) {
+                    q = "UPDATE prueba SET DESCRIPCION = '" + description + "' WHERE DESCRIPCION = '" + oldDescription + "'";
+                } else if (title == null && description == null && fechaOrURL != null) {
+                    q = "UPDATE prueba SET FECHA = '"+fechaOrURL+"' WHERE FECHA = '"+oldFecha+"'";
+                }
+                else {
+                    q = "UPDATE prueba SET ID = '"+title+"' WHERE ID ='"+oldTitle+"', " +
+                        "SET DESCRIPCION = '"+description+"' WHERE DESCRIPCION = '"+oldDescription+"', " +
+                        "SET FECHA  = '"+fechaOrURL+"' WHERE FECHA = '"+oldFecha+"'";
+                }
+                query.execute(q);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            }
+        }
+
+    // ------------------------------------- * GEN. FUNCTIONS * ------------------------------------- //
+    public int getNumRows(String tableName){
+        String q = "SELECT COUNT(*) AS num FROM "+ tableName;
         try{
             ResultSet rs = query.executeQuery(q);
             rs.next();
-            return rs.getInt("XX");
+            return rs.getInt("num");
         }
-        catch (Exception e){
+        catch(Exception e){
             System.out.println(e);
         }
         return 0;
     }
 
-    // ------------------------------------------ * SELECTS * ------------------------------------------- //
-
-    public String getSubjectForLesson (String subject){
-        String q = "SELECT ID from asignatura WHERE ID = '"+subject+"' ";
-    }
-
-
-    // --------------------------------------- * VERIFICATIONS * --------------------------------------- //
-    public boolean Login(String username, String password){
-        String q = "SELECT COUNT(*) AS n FROM usuario " +
-                   " WHERE ID= '"+username+"' AND PASSWORD = '"+password+"'";
-        System.out.println(q);
-        try {
+    public int getNumFilesThatMatchQuery(String q){
+        try{
             ResultSet rs = query.executeQuery(q);
             rs.next();
-        }
-        catch (Exception e){
+            return rs.getInt("num");
+        } catch(Exception e){
             System.out.println(e);
         }
-        return false;
-    }
-    // execute si no ha de retornar, executeQuery si ha de retornar
-
-    // --------------------------------------- * INSERTS * --------------------------------------- //
-    public void insertSubject (String subject, String color){
-        String q = "INSERT INTO asignatura (ID, COLOR) VALUES ('"+subject+"', '"+color+"')";
-        System.out.println(q);
-        try{
-            query.execute(q);
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
+        return 0;
     }
 
-    public void insertDocument (String ID, String descripcion, String URL, String Subject, String TypeOfDocs){
-        String q = "INSERT INTO documento (ID, DESCRIPCION, URL, ASIGNATURA_ID, TIPODOCUMENTO_ID VALUES" +
-                " ()";
-    }
-
-    public void insertSomething(String username, String password){
-        String q = "INSERT INTO usuario (ID, PASSWORD) VALUES ('"+username+"', '"+password+"')";
-        System.out.println(q);
-        try{
-            query.execute(q);
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
-    }
-
-    // delete
-    public void deleteSomething (String username){
-        String q = "DELETE FROM usuario WHERE SUBSTR(ID, 1,1) = '"+username+"' ";
-        // DELETE FROM usuario --> delete everything, DELETE FROM usuario WHERE ID = .. --> una fila
-        System.out.println(q);
-        try{
-            query.execute(q);
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
-    }
-
-    // update
-    public void updateSomething (String username, String oldUsername){
-        String q = "UPDATE usuario SET ID = '"+username+"' WHERE ID ='"+oldUsername+"' ";
-        System.out.println(q);
-        try{
-            query.execute(q);
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
-    }
-
-    // Search : SELECT usuario FROM  xx WHERE xx LIKE
-    public String[][] preguntesCercador(String clauCerca){
-
-        String qNF = "SELECT COUNT(*) AS num FROM usuario WHERE ID LIKE '%"+ clauCerca+"%'";
-        int nf = getNumFilesMatchQuery(qNF);
-        String[][] info = new String[nf][2];
-        String q = "SELECT ID, PASSWORD FROM usuario WHERE ID LIKE '%"+ clauCerca+"%'";
-        System.out.println(q);
-        try{
-            ResultSet rs = query.executeQuery(q);
-            int n=0;
-            while(rs.next()){
-                info[n][0] = rs.getString("ID");
-                info[n][1] = rs.getString("PASSWORD");
-                n++;
-            }
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
-        return info;
-    }
+    // --------------------------------------- * OTHERS * --------------------------------------- //
 }
