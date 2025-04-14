@@ -26,7 +26,7 @@ public class PopUpTest extends PApplet {
         bgColor = color(255);
         // Creació del Tria
         c = new PopUp(this, 100, 100, 800, 340);
-        c.setTextButtons("SHARE","EDIT TEST","CHANGE LOCATION");
+        c.setTextButtons("REGISTRARSE");
     }
 
     public void draw() {
@@ -41,12 +41,6 @@ public class PopUpTest extends PApplet {
 
     public void mousePressed(){
         if(c.b1.mouseOverButton(this) && c.b1.isEnabled()){
-            c.setVisible(false);
-        }
-        else if(c.b2.mouseOverButton(this) && c.b2.isEnabled()){
-            c.setVisible(false);
-        }
-        else if(c.b3.mouseOverButton(this) && c.b3.isEnabled()){
             c.setVisible(false);
         }
         else {

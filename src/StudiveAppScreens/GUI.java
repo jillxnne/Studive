@@ -1,45 +1,56 @@
 package StudiveAppScreens;
-import StudiveAppGUI.Checkbox;
-import StudiveAppGUI.PagedCard;
-import StudiveAppGUI.Button;
-import StudiveAppGUI.BarsDiagram;
-import StudiveAppGUI.SelectButton;
-import StudiveAppGUI.PagedSubject;
+import StudiveAppGUI.*;
 import processing.core.PApplet;
 import static StudiveAppLayout.Layout.*;
 import static StudiveAppFonts.Sizes.*;
-import StudiveAppGUI.ImageButtons;
-import StudiveAppGUI.TextArea;
+import StudiveAppQuestionaire.FlashCard;
+import StudiveAppQuestionaire.MultipleChoiceQuiz;
 import StudiveAppColors.Colors;
 import StudiveAppFonts.Fonts;
 import processing.core.PImage;
 
 public class GUI extends PApplet {
-    public enum SCREENS {LOGINPAGE, HOMEPAGE, GENERALLESSONS, MAINLESSONS, EDITNAME, ADDSUBJECT,LINKSPAGE, PDFPAGE,
-        CARDSPAGE, QUIZPAGE, NOLINK, NOPDF, NOCARD, NOQUIZ, ADDLINK, ADDPDF, ADDQUIZ, ADDCARD, DONELESSONS,
-        NOTDONELESSONS, GENERALSTATISTICS, MAINSTATISTICS};
+    public enum SCREENS {SIGNINPAGE, LOGINPAGE, HOMEPAGE, SUBJECTPAGE, MAINLESSONS, ADDSUBJECT,LINKSPAGE, PDFPAGE,
+        CARDSPAGE, QUIZPAGE, ADDLINK, ADDPDF, ADDQUIZ, ADDCARD, DONELESSONS,
+        NOTDONELESSONS, GENERALSTATISTICS, MAINSTATISTICS, FLASHCARDTEST, FLASHCARDCREATION, TEST, TESTCREATION};
     public SCREENS Default;
-    ImageButtons home, foldermainbar, plus, statistic, mainfolder1, mainforlder2, editName, edit, back, bigback,
-            bigback1, share, mainback, mainback1;
+    ImageButtons home, foldermainbar, plus, statistic, doneLections, notDoneLections, editName, edit, back, subjectback,
+            bigback1, share, mainlessonback, statisticback,addDocTypeBackButton, addTestTypeBackButton;
     PImage homeIcon,homepressedIcon, homefolderIcon, homefolderpressedIcon, plusIcon, pdfIcon, testIcon, linkIcon,
             flashcardIcon, pluspressedIcon, statisticIcon, statisticpressedIcon, mainfolderIcon, editIcon,
             editpressedIcon, backIcon, backpressedIcon, shareIcon, sharepressedIcon, loginIcon;
-    TextArea Lection, namechange, title0,description0,title1,description1, subjecttitle, username, password;
-    Checkbox done, notDone;
-    PagedCard mainPageCard, mainPageStat, pagePDF, pageCard, pageLink,pageTest, mainPage;
-    PagedSubject mainPageLection;
-    Button lectNext, lectPrev, statNext, statPrev, newTest, accessResults, PDFfiles, Flashcardsfiles,
-            Quizfiles, Linksfiles,addFile,saveName, create, add0File, addlink, mainNext, mainPrev, Login;
+    TextArea Lection, namechange, titleDoc,descriptionDoc,titleTest,descriptionTest, subjecttitle, username,
+            password, newUsername, newPassword;
+    Checkbox done;
+    PagedCard HomePageCard, DonePageCard, NotDonePageCard, mainPageStat, pagePDF, pageFlashCards, pageLink,pageTest, mainPage;
+    PagedSubject Subjects;
+    Button PreviousSubject, NextSubject, statNext, statPrev, newTest, accessResults, PDFfiles, Flashcardsfiles,
+            Quizfiles, Linksfiles,addFile,saveName, create, add0File, addlink, stateOfLessonsNext, stateOfLessonsPrev,
+            login, signIn, createDoc, createTest,
+            goToSignIn;
     BarsDiagram genDiagram, mainDiagram;
     SelectButton typeOfLection;
     Colors colorss;
     Fonts fonts;
-
+    FlashCard flashCards;
+    MultipleChoiceQuiz questionaire;
+    String[][] subjectsInfo,
+            doneTests, notDoneTests, doneDocs, notDoneDocs, totalDone, totalNotDone,
+            pdfInfo, linkInfo, testInfo, flashcardsInfo, specificLessonInfo;
+    String lectionTitle, lectionTypeOfDoc, subjectName;
+    String currentPage = "PDF";
+    boolean pdfAlreadyLoaded = false;
+    public String lastSubjectLoaded = "";
+    FlashCard flashCard;
+    MultipleChoiceQuiz visualiveTestUI, createTestUI;
+    FlashCard createFlashCardUI;
+    FlashCard visualizeFlashCardUI;
+    boolean inCreateMode = true;
+    String testId = "";
+    String[] questions, answers;
+    int[] correctIndex;
 
     // ----------------------------------- * TABLE INFORMATION * ----------------------------------- //
-    String[][] subjectsInfo; // Información sobre las asignaturas que habrá
-    String[][] homePageLessonsInfo; // hacer que solo se vean los tres primeros
-
     String[][] info = {
             {"Card Title 1", "cards", "This is the description for Card 1"},
             {"Card Title 2", "pdf", "This is the description for Card 2"},
@@ -50,38 +61,26 @@ public class GUI extends PApplet {
             {"Card Title 3", "link", "This is the description for Card 3"},
             {"Card Title 4", "test", "This is the description for Card 4"}
     };
-
-    String[][] cards = {
-            {"Title 1", "cards", "Description"},
-            {"Title 2", "cards", "Description"},
-            {"Title 3", "cards", "Description"},
-            {"Title 4", "cards", "Description"},
-    };
-    String[][] link = {
-            {"Title 1", "link", "Description"},
-            {"Title 2", "link", "Description"},
-            {"Title 3", "link", "Description"},
-            {"Title 4", "link", "Description"},
-    };
-    String[][] test = {
-            {"Title 1", "test", "Description"},
-            {"Title 2", "test", "Description"},
-            {"Title 3", "test", "Description"},
-            {"Title 4", "test", "Description"},
-    };
-    String[][] pdf = {
-            {"Title 1", "pdf", "Description"},
-            {"Title 2", "pdf", "Description"},
-            {"Title 3", "pdf", "Description"},
-            {"Title 4", "pdf", "Description"},
-    };
     String[] text = {"CAS", "TOK", "MN"};
     float[] values = {200, 450, 375};
     int[] colors = {color(0), color(255,255,255), color(100,100,100)};
     String[] lectionType = {"PDF", "TEST","FLASHCARDS","LINK"};
 
-    public GUI(PApplet p5, String[][] subjectsInfo){
-        this.subjectsInfo = subjectsInfo;
+    public GUI(PApplet p5, DataBase db){
+        // ----------------------------------- SUBJECT INFO
+        subjectsInfo = db.getSubjectsInfo();
+
+        // ----------------------------------- STATE OF LESSONS INFO
+        doneTests = db.getTotalOfStateOfTests("done");
+        notDoneTests = db.getTotalOfStateOfTests(" ");
+        doneDocs = db.getTotalOfStateOfDocs("done");
+        notDoneDocs = db.getTotalOfStateOfDocs(" ");
+        totalDone = db.getTotalOfTestsAndDocsState(doneTests, doneDocs);
+        totalNotDone = db.getTotalOfTestsAndDocsState(notDoneTests, notDoneDocs);
+
+        // ----------------------------------- SPECIFIC INFO ABOUT A LESSON
+        // specificLessonInfo = db.getSpecificInfoAboutTestOrDoc();
+
         Default  = SCREENS.HOMEPAGE;
         this.setImage(p5);
         setImageButtons(p5);
@@ -92,9 +91,21 @@ public class GUI extends PApplet {
         setBarsDiagrams();
         setAccessButtons(p5);
         setSelectButtons();
-        setLessonTypeButtons(p5);
-        setPagedSubjects();
         setColorss(p5);
+
+        setLoginAttributes(p5);
+        setHomePageAttributes(p5);
+        setStateOfLessonsPageButtons();
+        setDoneLessonsComponents();
+        setNotDoneLessonsComponents();
+        setSubjectComponents(p5);
+        setAddSubjectComponents(p5);
+        setDocOrTestPageButtons();
+        setAddDocOrTestPageButtons(p5);
+        setFlashCard(p5);
+        setQuestionaire(p5);
+        drawFlashCardCreatePage(p5);
+        drawFlashCardVisualizePage(p5);
         fonts = new Fonts(p5);
     }
     public void setColorss(PApplet p5){
@@ -115,20 +126,7 @@ public class GUI extends PApplet {
         mainDiagram.setValues(values);
         mainDiagram.setTexts(text);
     }
-    public void setLessonTypeButtons(PApplet p5){
-        PDFfiles = new Button(this,"PDF",210,170,375,50);
-        Flashcardsfiles = new Button(this,"FLASHCARDS",585,170,375,50);
-        Quizfiles = new Button(this,"QUIZ",960,170,375,50);
-        Linksfiles = new Button(this,"LINKS",1335,170,375,50);
-        addFile = new Button(this,"ADD FILE", 1350,300,150,50);
-        add0File = new Button (this, "ADD FILE", 900,700,100,50);
-        addlink = new Button (this, "ADD LINK", 800,630,300,50);
-    }
     public void setPageButtons(PApplet p5){
-        lectPrev = new Button(this, "PREV", IDwidth+350, 165, 60, 60);
-        lectNext = new Button(this, "NEXT", IDwidth+350, 820, 60, 60);
-        mainPrev = new Button(this, "PREV", IDwidth+350, 165, 60, 60);
-        mainNext = new Button(this, "NEXT", IDwidth+350, 820, 60, 60);
         statNext = new Button(this, "NEXT", 1450, 860, 60, 60);
         statPrev = new Button(this, "PREV", 1350, 860, 60, 60);
     }
@@ -136,92 +134,34 @@ public class GUI extends PApplet {
         accessResults = new Button(p5, "ACCESS RESULTS",360, 680,500,50);
         newTest = new Button(p5, "MAKE NEW TEST", 340, 780, 400, 50);
         saveName = new Button(p5, "SAVE", 900,520,100,50);
-        create = new Button(p5, "CREATE", 900,700,100,50);
-        Login = new Button(p5, "LOGIN", 890, 690,100,50);
     }
     public void setPagedCards(){
-        mainPageCard = new PagedCard(3);
-        mainPageCard.setDimensions(IDwidth-70,200, RecentLecturewidth+100, 625);
-        mainPageCard.setData(info);
-        mainPageCard.setCards();
-        mainPageCard.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
-
-        mainPage = new PagedCard(3);
-        mainPage.setDimensions(535,160, RecentLecturewidth+300, 700);
-        mainPage.setData(info);
-        mainPage.setCards();
-        mainPage.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
-
         mainPageStat = new PagedCard(5);
         mainPageStat.setDimensions(900,180, RecentLecturewidth+120, 625);
         mainPageStat.setData(info);
         mainPageStat.setCards();
         mainPageStat.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
-
-        pagePDF = new PagedCard(4);
-        pagePDF.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
-        pagePDF.setData(pdf);
-        pagePDF.setCards();
-        pagePDF.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
-
-        pageCard = new PagedCard(4);
-        pageCard.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
-        pageCard.setData(cards);
-        pageCard.setCards();
-        pageCard.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
-
-        pageLink = new PagedCard(4);
-        pageLink.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
-        pageLink.setData(link);
-        pageLink.setCards();
-        pageLink.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
-
-        pageTest = new PagedCard(4);
-        pageTest.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
-        pageTest.setData(test);
-        pageTest.setCards();
-        pageTest.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
-
     }
-    public void setPagedSubjects(){
-        mainPageLection = new PagedSubject(4);
-        mainPageLection.setDimensions(535,160, RecentLecturewidth+300, 700);
-        mainPageLection.setData(subjectsInfo);
-        mainPageLection.setSubjects(mainfolderIcon);
-    }
+
     public void setCheckBoxs(PApplet p5){
         done = new Checkbox(p5, PanelBoardwidth+320,PanelBoardheight+25,30);
     }
     public void setTextFields(PApplet p5){
         Lection = new TextArea(p5, (int)PanelBoardwidth+313, (int)PanelBoardheight-320, 500,290, 45,13);
         namechange = new TextArea(p5,750,450,400,50,40,13);
-        subjecttitle = new TextArea(p5,650,630,550,40,40,23);
-
-        title0 = new TextArea(p5,650,460,550,40,40,23);
-        description0 = new TextArea(p5,650,550,550,60,40,23);
-
-        title1 = new TextArea(p5,650,510,550,40,40,23);
-        description1 = new TextArea(p5,650,630,550,40,40,23);
-
-        username = new TextArea(p5, 690, 540, 550,40,40,23);
-        password = new TextArea(p5, 690,630,550,40,40,23);
     }
+
     public void setImageButtons(PApplet p5){
         home = new ImageButtons(p5, homeIcon,homepressedIcon, 650,990,30);
         foldermainbar = new ImageButtons(p5, homefolderIcon,homefolderpressedIcon,950, 990,30);
-        plus = new ImageButtons(p5,plusIcon, pluspressedIcon,1600,850,40);
         statistic = new ImageButtons(p5,statisticIcon, statisticpressedIcon,1250,990,30);
-        editName = new ImageButtons(p5,editIcon,editpressedIcon,320,82,18);
         edit = new ImageButtons(p5,editIcon,editpressedIcon,1470,250,20);
         share = new ImageButtons(p5,shareIcon,sharepressedIcon,1470,750,20);
         back = new ImageButtons(p5,backIcon,backpressedIcon,650,350,25);
-        bigback = new ImageButtons(p5,backIcon,backpressedIcon,650,300,25);
         bigback1 = new ImageButtons(p5,backIcon,backpressedIcon,650,250,25);
-        mainback = new ImageButtons(p5,backIcon,backpressedIcon,150,110,25);
-        mainback1 = new ImageButtons(p5,backIcon,backpressedIcon,150,110,25);
+        statisticback = new ImageButtons(p5,backIcon,backpressedIcon,150,110,25);
+        mainlessonback = new ImageButtons(p5,backIcon,backpressedIcon,150,130,25);
 
-        mainfolder1 = new ImageButtons(p5, mainfolderIcon, mainfolderIcon, 600, 350,180);
-        mainforlder2 = new ImageButtons(p5, mainfolderIcon, mainfolderIcon, 600, 720, 180);
     }
     public void setImage(PApplet p5){
         homeIcon = p5.loadImage("data/home.png");
@@ -249,42 +189,124 @@ public class GUI extends PApplet {
     // ----------------------------------- * LOGIN PAGE * ----------------------------------- //
     public void drawLoginPage(PApplet p5){
         p5.background(246,224,181);
+        p5.noFill();
+        p5.strokeWeight(5);
+        p5.rect(610,180,670,700,20);
         p5.image(loginIcon, 795,200,300,300);
         p5.textSize(MidTitleSize);
-        p5.text("Usuario", 690, 530);
+        p5.text("Usuario", 670, 530);
         username.display(p5);
         p5.textSize(MidTitleSize);
-        p5.text("Contraseña", 690, 615);
+        p5.text("Contraseña", 670, 615);
         password.display(p5);
-        Login.display(p5);
+        login.display(p5);
+        p5.textSize(SubtitleSize);
+        p5.text("¿No tiene cuenta?", 835,790);
+        goToSignIn.display(p5);
+    }
+
+    public void drawSignInPage(PApplet p5){
+        p5.background(246,224,181);
+        p5.noFill();
+        p5.strokeWeight(5);
+        p5.rect(610,180,670,600,20);
+        p5.image(loginIcon, 795,200,300,300);
+        p5.textSize(MidTitleSize);
+        p5.text("Introduce tu usuario", 670, 530);
+        username.display(p5);
+        p5.textSize(MidTitleSize);
+        p5.text("Introduce tu contraseña", 670, 615);
+        password.display(p5);
+        signIn.display(p5);
+    }
+
+    public void setLoginAttributes(PApplet p5){
+        newUsername = new TextArea(p5, 670, 540, 550,40,40,23);
+        newPassword = new TextArea(p5, 670,630,550,40,40,23);
+        username = new TextArea(p5, 670, 540, 550,40,40,23);
+        password = new TextArea(p5, 670,630,550,40,40,23);
+        login = new Button(p5, "INICIAR SESIÓN", 830, 690,200,50);
+        signIn = new Button(p5, "REGISTRARSE", 830,690,200,50);
+        goToSignIn = new Button (p5,"CREAR CUENTA", 830,800,200,50);
     }
 
     // ----------------------------------- * HOME PAGE * ----------------------------------- //
     public void drawHomePage(PApplet p5){
         p5.background(246,224,181);
-        drawGreetings(p5);
+        p5.textSize(TitleSize);
+        p5.text("Hola, " + username.getText(),125,FullScreenheight-980);
         p5.textSize(MidTitleSize);
         p5.text("Lecciones hechas", 450, 180);
         p5.textSize(MidTitleSize);
         p5.text("Lecciones a hacer", 450, 550);
         drawRecentLecturesList(p5);
-        mainfolder1.display(p5);
-        mainforlder2.display(p5);
+        doneLections.display(p5);
+        notDoneLections.display(p5);
         drawmainBar(p5);
+    }
+    // ----------------------------------- COMPONENTS
+    public void drawRecentLecturesList(PApplet p5) {
+        p5.textFont(fonts.getThirdFont());
+        p5.textSize(MidTitleSize);
+        p5.text("Lecciones recientes", IDwidth-70, 180);
+        HomePageCard.display(p5);
+    }
+    public void setHomePageAttributes(PApplet p5){
+        // buttons to access the (not) done lessons
+        doneLections = new ImageButtons(p5, mainfolderIcon, mainfolderIcon, 600, 350,180);
+        notDoneLections = new ImageButtons(p5, mainfolderIcon, mainfolderIcon, 600, 720, 180);
+
+        // overview of the 4 most recent lessons
+        HomePageCard = new PagedCard(4);
+        HomePageCard.setDimensions(IDwidth-70,200, RecentLecturewidth+100, 625);
+        HomePageCard.setData(totalDone);
+        HomePageCard.setCards();
+        HomePageCard.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
+    }
+    // -------------------------------- * (NOT) DONE LESSONS * -------------------------------- //
+    public void drawDoneLessons(PApplet p5){
+        p5.background(246,224,181);
+        DonePageCard.display(p5);
+        stateOfLessonsNext.display(p5);
+        stateOfLessonsPrev.display(p5);
+        drawmainBar(p5);
+    }
+    public void drawNotDoneLessons(PApplet p5){
+        p5.background(246,224,181);
+        NotDonePageCard.display(p5);
+        stateOfLessonsNext.display(p5);
+        stateOfLessonsPrev.display(p5);
+        drawmainBar(p5);
+    }
+    // ----------------------------------- COMPONENTS
+    public void setStateOfLessonsPageButtons(){
+        stateOfLessonsPrev = new Button(this, "PREV", IDwidth+350, 165, 60, 60);
+        stateOfLessonsNext = new Button(this, "NEXT", IDwidth+350, 820, 60, 60);
+    }
+    public void setDoneLessonsComponents(){
+        DonePageCard = new PagedCard(5);
+        DonePageCard.setDimensions(535,160, RecentLecturewidth+300, 700);
+        DonePageCard.setData(totalDone);
+        DonePageCard.setCards();
+        DonePageCard.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
+    }
+    public void setNotDoneLessonsComponents(){
+        NotDonePageCard = new PagedCard(5);
+        NotDonePageCard.setDimensions(535,160, RecentLecturewidth+300, 700);
+        NotDonePageCard.setData(totalNotDone);
+        NotDonePageCard.setCards();
+        NotDonePageCard.setImages(flashcardIcon, pdfIcon, linkIcon,testIcon);
     }
 
     // ----------------------------------- * SUBJECT PAGE  * ----------------------------------- //
-    // ----------------------------------- * (NOT) DONE LESSONS * ----------------------------------- //
-    // ----------------------------------- * INFO OF LESSONS * ----------------------------------- //
-    // ----------------------------------- * STATISTICS * ----------------------------------- //
-
-
-    public void drawGeneralLessons(PApplet p5){
+    public void drawSubjectPage(PApplet p5){
         p5.background(246,224,181);
-        drawUpperSign(p5);
-        mainPageLection.display(p5);
-        lectNext.display(p5);
-        lectPrev.display(p5);
+        p5.fill(0);
+        p5.textSize(TitleSize);
+        p5.text("Asignaturas", 210, 120);
+        Subjects.display(p5);
+        NextSubject.display(p5);
+        PreviousSubject.display(p5);
         plus.display(p5);
         drawmainBar(p5);
     }
@@ -297,189 +319,314 @@ public class GUI extends PApplet {
         p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Colors: ",650,500);
-        p5.fill(0);
         p5.textSize(SubtitleSize);
         p5.text("Name of subject: ",650,620);
         subjecttitle.display(p5);
         create.display(p5);
         colorss.displayColors(p5, 800,520,300);
-        bigback.display(p5);
-    }
-    public void drawNoPDF(PApplet p5){
-        p5.background(246,224,181);
-        drawUpperSign(p5);
-        drawSubjectBar(p5);
-        p5.image(pdfIcon,820,400,230,230);
-        p5.fill(0);
-        p5.textSize(MidTitleSize);
-        p5.text("No files found",860,680);
-        add0File.display(p5);
-        drawmainBar(p5);
-    }
-    public void drawNoLink(PApplet p5){
-        p5.background(246,224,181);
-        drawUpperSign(p5);
-        drawSubjectBar(p5);
-        p5.image(linkIcon,820,400,230,230);
-        p5.fill(0);
-        p5.textSize(MidTitleSize);
-        p5.text("No files found",860,680);
-        add0File.display(p5);
-        drawmainBar(p5);
-    }
-    public void drawNoQuiz(PApplet p5){
-        p5.background(246,224,181);
-        drawUpperSign(p5);
-        drawSubjectBar(p5);
-        p5.image(testIcon,820,400,230,230);
-        p5.fill(0);
-        p5.textSize(MidTitleSize);
-        p5.text("No files found",860,680);
-        add0File.display(p5);
-        drawmainBar(p5);
-    }
-    public void drawNoCard(PApplet p5){
-        p5.background(246,224,181);
-        drawUpperSign(p5);
-        drawSubjectBar(p5);
-        p5.image(flashcardIcon,820,400,230,230);
-        p5.fill(0);
-        p5.textSize(MidTitleSize);
-        p5.text("No files found",860,680);
-        add0File.display(p5);
-        drawmainBar(p5);
-    }
-    public void drawGreetings(PApplet p5){
-        p5.textSize(TitleSize);
-        p5.text("Hola, " + username.getText(),125,FullScreenheight-980);
+        subjectback.display(p5);
     }
 
-    public void drawMainLessons(PApplet p5){
+    // ----------------------------------- COMPONENTS
+    public void setSubjectComponents(PApplet p5){
+        Subjects = new PagedSubject(4);
+        Subjects.setDimensions(535,160, RecentLecturewidth+300, 700);
+        Subjects.setData(subjectsInfo);
+        Subjects.setSubjects(mainfolderIcon);
+
+        // buttons next and back for Subject Card
+        PreviousSubject = new Button(this, "PREV", IDwidth+350, 165, 60, 60);
+        NextSubject = new Button(this, "NEXT", IDwidth+350, 820, 60, 60);
+
+        // button to add new subject
+        plus = new ImageButtons(p5,plusIcon, pluspressedIcon,1600,850,40);
+    }
+
+    public void setAddSubjectComponents(PApplet p5){
+        // text areas & buttons to go back or create
+        subjecttitle = new TextArea(p5,650,630,550,40,40,23);
+        create = new Button(p5, "CREATE", 900,700,100,50);
+        subjectback = new ImageButtons(p5,backIcon,backpressedIcon,650,300,25);
+    }
+
+    // ---------------------------------- * DOCS AND TESTS * ---------------------------------- //
+    // ----------------------------------- MAIN PAGE
+    public void drawSelectDocOrTestPage(PApplet p5){
+        p5.fill(255);
+        p5.rect(210,170,1500,50,10);
+        PDFfiles.display(p5);
+        Flashcardsfiles.display(p5);
+        Quizfiles.display(p5);
+        Linksfiles.display(p5);
+    }
+
+    // ----------------------------------- PDF
+    public void drawPDF(PApplet p5) {
         p5.background(246,224,181);
-        drawUpperSign(p5);
-        drawLectureInfo(p5);
-        Lection.display(p5);
-        done.display(p5);
-        typeOfLection.display(p5);
-        if (typeOfLection.getSelectedValue() == "TEST"){
-            accessResults.display(p5);
-            p5.image(testIcon,380,280,380,380);
-        }  else if (typeOfLection.getSelectedValue() == "PDF"){
-            p5.image(pdfIcon,360,280,400,400);
-        } else if (typeOfLection.getSelectedValue() == "FLASHCARDS"){
-            p5.image(flashcardIcon,360,280,400,400);
-        } else if (typeOfLection.getSelectedValue() == "LINK"){
-            p5.image(linkIcon,360,280,380,380);
+        drawSelectDocOrTestPage(p5);
+        if (pdfInfo != null && !EmptyOrNot(pdfInfo)) {
+            pagePDF.display(p5);
+            if (addFile != null) addFile.display(p5);
+        } else {
+            p5.image(pdfIcon, 820, 400, 230, 230);
+            p5.fill(0);
+            p5.textSize(MidTitleSize);
+            p5.text("No hay PDFS", 860, 680);
+            if (add0File != null) add0File.display(p5);
         }
         drawmainBar(p5);
     }
 
-    public void drawAddLink(PApplet p5){
-        p5.background(246,224,181);
-        p5.fill(255);
-        p5.rect(600,180,700,600,15);
-        p5.image(linkIcon, 820,210, 230,230);
-        p5.fill(0);
-        p5.textSize(SubtitleSize);
-        p5.text("Title: ",650,450);
-        title0.display(p5);
-        p5.fill(0);
-        p5.textSize(SubtitleSize);
-        p5.text("Description: ",650,530);
-        description0.display(p5);
-        addlink.display(p5);
-        create.display(p5);
-        bigback1.display(p5);
-    }
     public void drawAddPDF(PApplet p5){
         p5.background(246,224,181);
         p5.fill(255);
-        p5.rect(600,180,700,600,15);
-        p5.image(pdfIcon, 820,210, 230,230);
+        p5.rect(600,120,700,800,15);
+        p5.image(pdfIcon, 820,150, 230,230);
         p5.fill(0);
         p5.textSize(SubtitleSize);
-        p5.text("Title: ",650,450);
-        title0.display(p5);
-        p5.fill(0);
-        p5.textSize(SubtitleSize);
-        p5.text("Description: ",650,530);
-        description0.display(p5);
+        p5.text("Título: ",650,400);
+        titleDoc.display(p5);
+        p5.text("Descripcón: ",650,485);
+        p5.text("Enlace: ", 650, 760);
+        descriptionDoc.display(p5);
         addlink.display(p5);
-        create.display(p5);
-        bigback1.display(p5);
+        createDoc.display(p5);
+        addDocTypeBackButton.display(p5);
     }
-    public void drawAddTest(PApplet p5){
+
+    // ----------------------------------- FLASHCARD
+    public void drawFlashcard(PApplet p5){
         p5.background(246,224,181);
-        p5.fill(255);
-        p5.rect(600,220,700,550,15);
-        p5.image(testIcon, 820,250, 230,230);
-        p5.fill(0);
-        p5.textSize(SubtitleSize);
-        p5.text("Title: ",650,500);
-        title1.display(p5);
-        p5.fill(0);
-        p5.textSize(SubtitleSize);
-        p5.text("Description: ",650,620);
-        description1.display(p5);
-        create.display(p5);
-        bigback.display(p5);
+        drawSelectDocOrTestPage(p5);
+        if (flashcardsInfo != null && !EmptyOrNot(flashcardsInfo)) {
+            pageFlashCards.display(p5);
+            if (addFile != null) addFile.display(p5);
+        } else {
+            p5.image(flashcardIcon, 820, 400, 230, 230);
+            p5.fill(0);
+            p5.textSize(MidTitleSize);
+            p5.text("No hay flashcards", 860, 680);
+            if (add0File != null) add0File.display(p5);
+        }
+        drawmainBar(p5);
     }
     public void drawAddCards(PApplet p5){
         p5.background(246,224,181);
         p5.fill(255);
-        p5.rect(600,220,700,550,15);
-        p5.image(flashcardIcon, 820,250, 230,230);
+        p5.rect(600,170,700,710,15);
+        p5.image(flashcardIcon, 820,230, 230,230);
         p5.fill(0);
         p5.textSize(SubtitleSize);
-        p5.text("Title: ",650,500);
-        title1.display(p5);
+        p5.text("Título: ",650,490);
+        titleTest.display(p5);
         p5.fill(0);
         p5.textSize(SubtitleSize);
-        p5.text("Description: ",650,620);
-        description1.display(p5);
-        create.display(p5);
-        bigback.display(p5);
+        p5.text("Descripcion: ",650,570);
+        descriptionTest.display(p5);
+        createTest.display(p5);
+        addTestTypeBackButton.display(p5); // CHANGEEEEEEEEE
     }
 
-    public void drawPage(PApplet p5, String pageType){
+    // ----------------------------------- LINK
+    public void drawLink(PApplet p5){
         p5.background(246,224,181);
-        drawSubjectBar(p5);
-        drawUpperSign(p5);
-
-        if (pageType.equals("PDF")) {
-            pagePDF.display(p5);
-        } else if (pageType.equals("FLASHCARDS")) {
-            pageCard.display(p5);
-        } else if (pageType.equals("QUIZ")) {
-            pageTest.display(p5);
-        } else if (pageType.equals("LINKS")) {
+        drawSelectDocOrTestPage(p5);
+        if (linkInfo != null && !EmptyOrNot(linkInfo)) {
             pageLink.display(p5);
+            if (addFile != null) addFile.display(p5);
+        } else {
+            p5.image(linkIcon, 820, 400, 230, 230);
+            p5.fill(0);
+            p5.textSize(MidTitleSize);
+            p5.text("No hay enlaces", 860, 680);
+            if (add0File != null) add0File.display(p5);
         }
-
-        addFile.display(p5);
         drawmainBar(p5);
     }
-    public void drawDoneLessons(PApplet p5){
+    public void drawAddLink(PApplet p5){
         p5.background(246,224,181);
-        drawUpperSign(p5);
-        mainPage.display(p5);
-        mainNext.display(p5);
-        mainPrev.display(p5);
-        drawmainBar(p5);
+        p5.fill(255);
+        p5.rect(600,120,700,800,15);
+        p5.image(linkIcon, 820,150, 230,230);
+        p5.fill(0);
+        p5.textSize(SubtitleSize);
+        p5.text("Título: ",650,400);
+        titleDoc.display(p5);
+        p5.text("Descripcón: ",650,485);
+        p5.text("Enlace: ", 650, 760);
+        descriptionDoc.display(p5);
+        addlink.display(p5);
+        createDoc.display(p5);
+        addDocTypeBackButton.display(p5);
     }
 
-    public void drawNotDoneLessons(PApplet p5){
+    // ----------------------------------- TEST
+    public void drawTest(PApplet p5){
         p5.background(246,224,181);
-        drawUpperSign(p5);
-        mainPage.display(p5);
-        mainNext.display(p5);
-        mainPrev.display(p5);
+        drawSelectDocOrTestPage(p5);
+        if (testInfo != null && !EmptyOrNot(testInfo)) {
+            pageTest.display(p5);
+            if (addFile != null) addFile.display(p5);
+        } else {
+            p5.image(testIcon, 820, 400, 230, 230);
+            p5.fill(0);
+            p5.textSize(MidTitleSize);
+            p5.text("No hay tests", 860, 680);
+            if (add0File != null) add0File.display(p5);
+        }
+        drawmainBar(p5);
+    }
+    public void drawAddTest(PApplet p5){
+        p5.background(246,224,181);
+        p5.fill(255);
+        p5.rect(600,170,700,710,15);
+        p5.image(testIcon, 820,230, 230,230);
+        p5.fill(0);
+        p5.textSize(SubtitleSize);
+        p5.text("Título: ",650,490);
+        titleTest.display(p5);
+        p5.fill(0);
+        p5.textSize(SubtitleSize);
+        p5.text("Descripcion: ",650,570);
+        descriptionTest.display(p5);
+        createTest.display(p5);
+        addTestTypeBackButton.display(p5); // CHANGEEEEEEEEE
+    }
+
+    // ----------------------------------- COMPONENTS
+    public boolean EmptyOrNot(String[][] array){
+        if (array == null) {
+            return true;
+        }
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != null) {
+                for (int j = 0; j < array[i].length; j++) {
+                    if (array[i][j] != null && !array[i][j].isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    public void setDocOrTestPageButtons(){
+        // Top bar buttons to access type of doc and test
+        PDFfiles = new Button(this,"PDF",210,170,375,50);
+        Flashcardsfiles = new Button(this,"FLASHCARDS",585,170,375,50);
+        Quizfiles = new Button(this,"QUIZ",960,170,375,50);
+        Linksfiles = new Button(this,"LINKS",1335,170,375,50);
+
+        // redo to add button of description
+        // buttons to add new files when it's (not) empty
+        addFile = new Button(this,"ADD FILE", 1350,300,150,50);
+        add0File = new Button (this, "ADD FILE", 900,700,100,50);
+
+        // button to add
+        addlink = new Button (this, "ADD LINK", 650,770,600,50);
+    }
+    public void setAddDocOrTestPageButtons(PApplet p5){
+        titleDoc = new TextArea(p5,650,410,600,40,51,1);
+        descriptionDoc = new TextArea(p5,650,500,600,220,51,8);
+        createDoc = new Button(this, "CREAR",900,840,100,50);
+        addDocTypeBackButton = new ImageButtons(p5,backIcon,backpressedIcon,650,230,25);
+
+        titleTest = new TextArea(p5,650,500,600,40,51,1);
+        descriptionTest = new TextArea(p5,650,580,600,210,51,8);
+        createTest = new Button(this, "CREAR",900,810,100,50);
+        addTestTypeBackButton = new ImageButtons(p5,backIcon,backpressedIcon,650,250,25);
+    }
+    // ---------------------------------- * FLASHCARDS PAGE * ---------------------------------- //
+    public void drawFlashCardVisualizePage(PApplet p5){
+        p5.background(246,224,181);
+        visualizeFlashCardUI = new FlashCard(p5,questions, answers);
+        visualizeFlashCardUI.display(p5);
+    }
+
+    public void drawFlashCardCreatePage(PApplet p5){
+        p5.background(246,224,181);
+        createFlashCardUI = new FlashCard(p5, true);
+        createFlashCardUI.display(p5);
+    }
+
+    // ------------------------------------- * TEST PAGE * ------------------------------------ //
+    public void drawTestVisualizePage(PApplet p5){
+        p5.background(246,224,181);
+        visualiveTestUI = new MultipleChoiceQuiz(p5,questions, answers, correctIndex);
+        visualiveTestUI.display(p5);
+    }
+
+    public void drawTestCreatePage(PApplet p5){
+        p5.background(246,224,181);
+        createTestUI = new MultipleChoiceQuiz(p5, true);
+        createTestUI.display(p5);
+    }
+
+
+    // --------------------------------- * MAIN LESSON INFO * --------------------------------- //
+    public void drawMainLessons(PApplet p5) {
+        p5.background(246, 224, 181);
+        drawLectureInfo(p5);
+        done.display(p5);
+        /*Lection.display(p5);
+        typeOfLection.display(p5);
+        if (typeOfLection.getSelectedValue() == "TEST") {
+            accessResults.display(p5);
+            p5.image(testIcon, 380, 280, 380, 380);
+        } else if (typeOfLection.getSelectedValue() == "PDF") {
+            p5.image(pdfIcon, 360, 280, 400, 400);
+        } else if (typeOfLection.getSelectedValue() == "FLASHCARDS") {
+            p5.image(flashcardIcon, 360, 280, 400, 400);
+        } else if (typeOfLection.getSelectedValue() == "LINK") {
+            p5.image(linkIcon, 360, 280, 380, 380);
+        }
+         */
         drawmainBar(p5);
     }
 
+    // ----------------------------------- COMPONENTS
+    public void drawLectureInfo(PApplet p5){
+        p5.textSize(MidTitleSize);
+        p5.text("Title", 500, 260);
+        p5.fill(238,169,144);
+        p5.rect(900, 160, PanelBoardwidth,PanelBoardheight-50,25);
+        p5.fill(0);
+        p5.textSize(MidTitleSize);
+        p5.text("DETALLES DEL LECCIÓN", PanelBoardwidth+310,PanelBoardheight-460);
+        p5.textSize(SubtitleSize);
+        p5.text("TIPO: ", PanelBoardwidth+310,PanelBoardheight-420);
+        p5.textSize(SubtitleSize);
+        p5.text("DESCRIPCIÓN: ", PanelBoardwidth+310,PanelBoardheight-330);
+        p5.textSize(SubtitleSize);
+        p5.text("MARCAR COMO: ", PanelBoardwidth+310,PanelBoardheight);
+        p5.textSize(SubtitleSize);
+        p5.text("HECHO ", PanelBoardwidth+360,PanelBoardheight+50);
+        // edit.display(p5);
+        //  share.display(p5);
+        mainlessonback.display(p5);
+    }
+    // ------------------------------------ * FLASHCARD * ------------------------------------ //
+    public void drawFlashCard(PApplet p5){
+        p5.background(246,224,181);
+        flashCards.display(p5);
+    }
+    // ----------------------------------- COMPONENTS
+    public void setFlashCard(PApplet p5){
+        flashCards = new FlashCard(p5,true);
+    }
+
+    // ------------------------------------- * TESTS * -------------------------------------- //
+    public void drawQuestionaire(PApplet p5) {
+        p5.background(246, 224, 181);
+        questionaire.display(p5);
+    }
+    // ----------------------------------- COMPONENTS
+    public void setQuestionaire(PApplet p5){
+        questionaire = new MultipleChoiceQuiz(p5,true);
+    }
+
+    // ----------------------------------- * STATISTICS * ----------------------------------- //
     public void drawGeneralStatistics(PApplet p5){
         p5.background(246,224,181);
-        drawUpperSign(p5);
         drawStatisticGenInfo(p5);
         statNext.display(p5);
         statPrev.display(p5);
@@ -490,67 +637,10 @@ public class GUI extends PApplet {
 
     public void drawMainStatistics(PApplet p5){
         p5.background(246,224,181);
-        drawUpperSign(p5);
         drawStatisticMainInfo(p5);
         mainDiagram.display(p5);
         newTest.display(p5);
         drawmainBar(p5);
-    }
-
-    public void drawmainBar(PApplet p5){
-        p5.fill(102,84,94);
-        p5.rect(0,FullScreenheight-150,MainBarwidth,MainBarheight);
-
-        home.display(p5);
-        foldermainbar.display(p5);
-        statistic.display(p5);
-    }
-
-    public void drawRecentLecturesList(PApplet p5) {
-        p5.textFont(fonts.getThirdFont());
-        p5.textSize(MidTitleSize);
-        p5.text("Lecciones recientes", IDwidth-70, 180);
-        mainPageCard.display(p5);
-    }
-
-    public void drawSubjectBar(PApplet p5){
-        p5.fill(255);
-        p5.rect(210,170,1500,50,10);
-        PDFfiles.display(p5);
-        Flashcardsfiles.display(p5);
-        Quizfiles.display(p5);
-        Linksfiles.display(p5);
-    }
-
-    public void drawUpperSign(PApplet p5){
-        p5.fill(0);
-        p5.textSize(TitleSize);
-        p5.text("Lección/Subject", 210, 120);
-    }
-
-    public void drawLectureInfo(PApplet p5){
-        p5.textSize(MidTitleSize);
-        p5.text("Title", 500, 260);
-
-        p5.fill(238,169,144);
-        p5.rect(900, 160, PanelBoardwidth,PanelBoardheight-50,25);
-        p5.fill(0);
-        p5.textSize(MidTitleSize);
-        p5.text("DETALLES DEL LECCIÓN", PanelBoardwidth+310,PanelBoardheight-460);
-        p5.textSize(SubtitleSize);
-        p5.text("TIPO: ", PanelBoardwidth+310,PanelBoardheight-420);
-        p5.textSize(SubtitleSize);
-
-        p5.text("DESCRIPCIÓN: ", PanelBoardwidth+310,PanelBoardheight-330);
-        p5.textSize(SubtitleSize);
-
-        p5.text("MARCAR COMO: ", PanelBoardwidth+310,PanelBoardheight);
-        p5.textSize(SubtitleSize);
-        p5.text("HECHO ", PanelBoardwidth+360,PanelBoardheight+50);
-
-        edit.display(p5);
-        share.display(p5);
-        mainback.display(p5);
     }
 
     public void drawStatisticMainInfo(PApplet p5){
@@ -576,7 +666,7 @@ public class GUI extends PApplet {
         p5.fill(255);
         p5.rect(StatisticMainBoardwidth+480,StatisticMainBoardheight-90,400,200);
         //afegir boto Recomendaciones
-        mainback1.display(p5);
+        statisticback.display(p5);
     }
 
     public void drawStatisticGenInfo(PApplet p5) {
@@ -595,5 +685,14 @@ public class GUI extends PApplet {
         p5.fill(255);
         p5.rect(StatisticGenBoardwidth - 300, StatisticGenBoardheight + 480, 500,70);
         //afegir boto Recomendaciones és un text field
+    }
+
+    // ------------------------------------ * OTHERS * ------------------------------------- //
+    public void drawmainBar(PApplet p5){
+        p5.fill(102,84,94);
+        p5.rect(0,FullScreenheight-150,MainBarwidth,MainBarheight);
+        home.display(p5);
+        foldermainbar.display(p5);
+        statistic.display(p5);
     }
 }

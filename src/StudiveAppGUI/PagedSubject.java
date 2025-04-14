@@ -41,11 +41,9 @@ public class PagedSubject {
             float b = 10;
             for (int i = firstSubjectPage; i <= lastSubjectPage; i++) {
                 if (i < subjects.length) {
-                    // Crear el Subject con el título
                     subjects[i] = new Subject(subjectsData[i][0], subjectsData[i][1]);
                     subjects[i].setDimensions(x, ySubject, w, hSubject, b);
 
-                    // Asignar la misma imagen a todos los subjects
                     subjects[i].setImage(img);
 
                     ySubject += hSubject + b;
@@ -94,7 +92,9 @@ public class PagedSubject {
     }
     public String getSelectedSubjectTitle() {
         if(selectedCard >= 0 && selectedCard < subjects.length) {
-            return subjects[selectedCard].title;
+            if(subjects[selectedCard].title != null){
+                return subjects[selectedCard].title;
+            }
         }
         return null;
     }

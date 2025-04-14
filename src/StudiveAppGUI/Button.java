@@ -2,13 +2,11 @@ package StudiveAppGUI;
 import processing.core.PApplet;
 
 public class Button {
-    // Propietats d'un botó:
-
-    float x, y, w, h;  // Posició (x, y) i dimensions (w, h)
-    int fillColor, strokeColor; // Colors del boto (fill / stroke).
-    int fillColorOver, fillColorDisabled;  // Colors del boto (actiu / inactiu).
-    String textBoto;  // Text
-    boolean enabled;  // Estat del botó (actiu / inactiu).
+    float x, y, w, h;
+    int fillColor, strokeColor;
+    int fillColorOver, fillColorDisabled;
+    String textBoto;
+    boolean enabled;
 
     // Constructor
     public Button(PApplet p5, String text, float x, float y, float w, float h){
@@ -38,7 +36,6 @@ public class Button {
         this.fillColorOver = cOver;
         this.fillColorDisabled = cDisabled;
     }
-
 
     // Getters
     public boolean isEnabled(){
@@ -73,8 +70,15 @@ public class Button {
         return px > x && px < x + w && py > y && py < y + h;
     }
 
-    void setText(String newText) {
+    void setLabel(String newText) {
         this.textBoto = newText;
     }
+    public boolean checkClick(PApplet app) {
+        return mouseOverButton(app) && app.mousePressed;
+    }
 
+    public void setPosition(int i, int i1) {
+        this.x = i;
+        this.y = i1;
+    }
 }

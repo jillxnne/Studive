@@ -47,13 +47,13 @@ public class PagedCard {
         for (int i = 0; i < cards.length; i++) {
             if (cards[i] != null) {
                 // Asignar imagen según la sección
-                if (cards[i].section.equals("cards")) {
+                if (cards[i].section.equals("FLASHCARD")) {
                     img = imgCard; // Imagen para la sección "cards"
-                } else if (cards[i].section.equals("pdf")) {
+                } else if (cards[i].section.equals("PDF")) {
                     img = imgPdf; // Imagen para la sección "pdf"
-                } else if (cards[i].section.equals("link")) {
+                } else if (cards[i].section.equals("LINK")) {
                     img = imgLink; // Imagen para la sección "link"
-                } else if (cards[i].section.equals("test")) {
+                } else if (cards[i].section.equals("TEST")) {
                     img = imgTest; // Imagen para la sección "test"
                 }
                 cards[i].setImage(img); // Asignar la imagen al card
@@ -96,6 +96,35 @@ public class PagedCard {
             selectedCard = -1;
         }
     }
+
+    public String[] getSelectedCardInfo() {
+        String[] CardInfo = new String[2];
+        if(selectedCard >= 0 && selectedCard < cards.length) {
+            if(cards[selectedCard].title != null){
+                CardInfo[0] = cards[selectedCard].title;
+                CardInfo[1] = cards[selectedCard].section;
+                return CardInfo;
+            }
+        }
+        return null;
+    }
+    public String getSelectedCardTitle() {
+        if(selectedCard >= 0 && selectedCard < cards.length) {
+            if(cards[selectedCard].title != null){
+                return cards[selectedCard].title;
+            }
+        }
+        return null;
+    }
+    public String getSelectedCardDescription() {
+        if(selectedCard >= 0 && selectedCard < cards.length) {
+            if(cards[selectedCard].title != null){
+                return cards[selectedCard].section;
+            }
+        }
+        return null;
+    }
+
     public boolean checkMouseOver(PApplet p5){
         int firstCardPage = numCardsPage*numPage;
         int lastCardPage  = numCardsPage*(numPage+1) - 1;

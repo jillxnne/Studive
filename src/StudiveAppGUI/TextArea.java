@@ -2,6 +2,7 @@ package StudiveAppGUI;
 import processing.core.PApplet;
 import static java.lang.Math.min;
 import static processing.core.PApplet.constrain;
+import static processing.core.PApplet.println;
 import static processing.core.PConstants.BACKSPACE;
 import static StudiveAppFonts.Sizes.*;
 
@@ -11,7 +12,7 @@ public class TextArea {
     int numCols, numRows;
     int bgColor, fgColor, selectedColor, borderColor;
     int borderWeight = 1;
-    String text = "";
+    public String text = "";
     String[] lines;
     float sizeText = SubtitleSize;
     boolean selected = false;
@@ -30,21 +31,19 @@ public class TextArea {
     public String getText(){ return this.text; }
     public void display(PApplet p5) {
         p5.pushStyle();
-        if (selected) {
-            p5.fill(selectedColor);
-        } else {
-            p5.fill(bgColor);
-        }
-
         p5.strokeWeight(borderWeight);
         p5.stroke(borderColor);
+        p5.fill(selected ? selectedColor : bgColor);
+        p5.rectMode(p5.CORNER);
         p5.rect(x, y, w, h, 5);
 
         p5.fill(fgColor);
         p5.textSize(sizeText);
-        for(int i=0; i<lines.length; i++){
-            if(lines[i]!=null){
-                p5.text(lines[i], x + 5, y + (i+1)* sizeText);
+        p5.textAlign(p5.LEFT);
+        float lineHeight = sizeText + 5;
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i] != null) {
+                p5.text(lines[i], x + 10, y + lineHeight * (i + 1));
             }
         }
         p5.popStyle();
@@ -77,6 +76,7 @@ public class TextArea {
         }
     }
     public void addText(char c) {
+        println(c);
         if (this.text.length() < this.numCols*this.numRows) {
             this.text += c;
         }
@@ -89,13 +89,30 @@ public class TextArea {
         updateLines();
     }
     public boolean mouseOverTextField(PApplet p5) {
+        println(p5.mouseX, p5.mouseY);
         return (p5.mouseX >= this.x && p5.mouseX <= this.x + this.w && p5.mouseY >= this.y && p5.mouseY <= this.y + this.h);
     }
     public void isPressed(PApplet p5) {
+        println("MOUSE PRESSED");
         if (mouseOverTextField(p5)) {
             selected = true;
         } else {
             selected = false;
         }
+
+        println("SELECTED: "+selected);
     }
+
+    public void setText(String s) {
+        this.text = s;
+    }
+    public void clear() {
+        this.text = "";
+        for(int i=0; i<lines.length; i++){
+            lines[i] ="";
+        }
+        System.out.println("TextArea cleared");
+
+    }
+
 }
