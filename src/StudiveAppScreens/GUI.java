@@ -39,14 +39,13 @@ public class GUI extends PApplet {
             pdfInfo, linkInfo, testInfo, flashcardsInfo, specificLessonInfo;
     String lectionTitle, lectionTypeOfDoc, subjectName;
     String currentPage = "PDF";
-    boolean pdfAlreadyLoaded = false;
     public String lastSubjectLoaded = "";
-    FlashCard flashCard;
     MultipleChoiceQuiz visualiveTestUI, createTestUI;
     FlashCard createFlashCardUI;
     FlashCard visualizeFlashCardUI;
     boolean inCreateMode = true;
     String testId = "";
+    String flashCardId,questionaireID = "";
     String[] questions, answers;
     int[] correctIndex;
 
@@ -102,10 +101,8 @@ public class GUI extends PApplet {
         setAddSubjectComponents(p5);
         setDocOrTestPageButtons();
         setAddDocOrTestPageButtons(p5);
-        setFlashCard(p5);
-        setQuestionaire(p5);
-        drawFlashCardCreatePage(p5);
-        drawFlashCardVisualizePage(p5);
+        setFlashCards(p5);
+        setTests(p5);
         fonts = new Fonts(p5);
     }
     public void setColorss(PApplet p5){
@@ -538,29 +535,35 @@ public class GUI extends PApplet {
     // ---------------------------------- * FLASHCARDS PAGE * ---------------------------------- //
     public void drawFlashCardVisualizePage(PApplet p5){
         p5.background(246,224,181);
-        visualizeFlashCardUI = new FlashCard(p5,questions, answers);
         visualizeFlashCardUI.display(p5);
     }
+    public boolean flashcardsInserted = false;
 
     public void drawFlashCardCreatePage(PApplet p5){
         p5.background(246,224,181);
-        createFlashCardUI = new FlashCard(p5, true);
         createFlashCardUI.display(p5);
+    }
+
+    public void setFlashCards(PApplet p5){
+        createFlashCardUI = new FlashCard(p5, true);
+        visualizeFlashCardUI = new FlashCard(p5,questions, answers);
     }
 
     // ------------------------------------- * TEST PAGE * ------------------------------------ //
     public void drawTestVisualizePage(PApplet p5){
         p5.background(246,224,181);
-        visualiveTestUI = new MultipleChoiceQuiz(p5,questions, answers, correctIndex);
         visualiveTestUI.display(p5);
     }
+    public boolean testInserted = false;
 
     public void drawTestCreatePage(PApplet p5){
         p5.background(246,224,181);
-        createTestUI = new MultipleChoiceQuiz(p5, true);
         createTestUI.display(p5);
     }
-
+    public void setTests(PApplet p5){
+        createTestUI = new MultipleChoiceQuiz(p5, true);
+        visualiveTestUI = new MultipleChoiceQuiz(p5,questions, answers, correctIndex);
+    }
 
     // --------------------------------- * MAIN LESSON INFO * --------------------------------- //
     public void drawMainLessons(PApplet p5) {
@@ -604,25 +607,6 @@ public class GUI extends PApplet {
         //  share.display(p5);
         mainlessonback.display(p5);
     }
-    // ------------------------------------ * FLASHCARD * ------------------------------------ //
-    public void drawFlashCard(PApplet p5){
-        p5.background(246,224,181);
-        flashCards.display(p5);
-    }
-    // ----------------------------------- COMPONENTS
-    public void setFlashCard(PApplet p5){
-        flashCards = new FlashCard(p5,true);
-    }
-
-    // ------------------------------------- * TESTS * -------------------------------------- //
-    public void drawQuestionaire(PApplet p5) {
-        p5.background(246, 224, 181);
-        questionaire.display(p5);
-    }
-    // ----------------------------------- COMPONENTS
-    public void setQuestionaire(PApplet p5){
-        questionaire = new MultipleChoiceQuiz(p5,true);
-    }
 
     // ----------------------------------- * STATISTICS * ----------------------------------- //
     public void drawGeneralStatistics(PApplet p5){
@@ -634,7 +618,6 @@ public class GUI extends PApplet {
         mainPageStat.display(p5);
         drawmainBar(p5);
     }
-
     public void drawMainStatistics(PApplet p5){
         p5.background(246,224,181);
         drawStatisticMainInfo(p5);
@@ -642,7 +625,6 @@ public class GUI extends PApplet {
         newTest.display(p5);
         drawmainBar(p5);
     }
-
     public void drawStatisticMainInfo(PApplet p5){
         // NAME OF LECTURE
         p5.fill(255);

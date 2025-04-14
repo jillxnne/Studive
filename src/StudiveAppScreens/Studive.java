@@ -1,6 +1,8 @@
 package StudiveAppScreens;
 import StudiveAppGUI.PagedCard;
 import StudiveAppGUI.PagedSubject;
+import StudiveAppQuestionaire.FlashCard;
+import StudiveAppQuestionaire.MultipleChoiceQuiz;
 import processing.core.PApplet;
 
 import javax.xml.crypto.Data;
@@ -113,19 +115,18 @@ public class Studive extends PApplet {
         gui.descriptionDoc.keyPressed(key, keyCode);
         gui.username.keyPressed(key,keyCode);
         gui.password.keyPressed(key,keyCode);
-        gui.flashCards.keyPressed(key,keyCode);
         if(gui.createFlashCardUI!=null) {
-            println("KEYPRESSED CREATE TEST UI");
             gui.createFlashCardUI.keyPressed(key, keyCode);
         }
         if(gui.createTestUI!=null) {
             gui.createTestUI.keyPressed(key, keyCode);
-            gui.visualiveTestUI.keyPressed(key, keyCode);
-            gui.questionaire.keyPressed(key,keyCode);
-
         }
-
-
+        if(gui.visualiveTestUI!=null){
+            gui.visualiveTestUI.keyPressed(key, keyCode);
+        }
+        if(gui.visualiveTestUI!=null){
+            gui.visualiveTestUI.keyPressed(key,keyCode);
+        }
         if (key =='0'){
             gui.Default = SCREENS.LOGINPAGE;
         }
@@ -221,7 +222,9 @@ public class Studive extends PApplet {
 
         } else if (gui.Default == SCREENS.QUIZPAGE){
             upperBarFunctions(this);
+            gui.pageTest.checkCardSelection(this);
             if (gui.pageTest != null && gui.pageTest.checkMouseOver(this)) {
+                loadVisualizeTest();
                 gui.Default = SCREENS.TEST;
             }
             if ((gui.addFile != null && gui.addFile.mouseOverButton(this)) ||
@@ -241,7 +244,9 @@ public class Studive extends PApplet {
 
         } else if (gui.Default == SCREENS.CARDSPAGE){
             upperBarFunctions(this);
+            gui.pageFlashCards.checkCardSelection(this);
             if (gui.pageFlashCards != null && gui.pageFlashCards.checkMouseOver(this)) {
+                loadVisualizeFlashcard();
                 gui.Default = SCREENS.FLASHCARDTEST;
             }
             if ((gui.addFile != null && gui.addFile.mouseOverButton(this)) ||
@@ -270,6 +275,7 @@ public class Studive extends PApplet {
             String subjectName = gui.Subjects.getSelectedSubjectTitle();
             gui.titleTest.isPressed(this);
             String title = gui.titleTest.getText();
+            gui.testId = gui.titleTest.getText();
             gui.descriptionTest.isPressed(this);
             String description = gui.descriptionTest.getText();
             upperBarFunctions(this);
@@ -304,6 +310,7 @@ public class Studive extends PApplet {
             String subjectName = gui.Subjects.getSelectedSubjectTitle();
             gui.titleTest.isPressed(this);
             String title = gui.titleTest.getText();
+            gui.testId = gui.titleTest.getText();
             gui.descriptionTest.isPressed(this);
             String description = gui.descriptionTest.getText();
             if (gui.createTest.mouseOverButton(this)) {
@@ -315,46 +322,46 @@ public class Studive extends PApplet {
             if (gui.addTestTypeBackButton.mouseOverButton(this)) {
                 gui.Default = SCREENS.CARDSPAGE;
             }
-
             // ----------------------------------- * TEST / CARD PAGE * ----------------------------------- //
         } else if (gui.Default == SCREENS.FLASHCARDCREATION) {
-            println("EEEEEOOOO");
             gui.createFlashCardUI.mousePressed(this);
-
             gui.titleTest.isPressed(this);
-            String title = gui.titleTest.getText();
-
-
-            if(gui.createFlashCardUI.confirmButton.mouseOverButton(this)){
-                if(!gui.createFlashCardUI.isCompleted){
+                if (gui.createFlashCardUI.isCompleted && !gui.flashcardsInserted) {
                     String[] questions = gui.createFlashCardUI.getQuestions();
                     String[] answers = gui.createFlashCardUI.getAnswers();
-                    db.insertFlashCardInfo(questions,answers,title);
+                    db.insertFlashCardInfo(questions, answers, gui.testId);
+                    gui.flashcardsInserted = true;
                 }
+            if (gui.createFlashCardUI.doneButton.mouseOverButton(this)){
+                gui.Default = SCREENS.CARDSPAGE;
             }
-
 
         } else if (gui.Default == SCREENS.FLASHCARDTEST) {
             gui.visualizeFlashCardUI.mousePressed(this);
-            gui.testId= gui.pageFlashCards.getSelectedCardTitle();
-            // bucle
-            gui.questions = db.getQuestionsOfAFlashCard(gui.testId);
-            gui.answers = db.getAnswersOfAFlashCard(gui.questions);
+            if (gui.visualizeFlashCardUI.doneButton.mouseOverButton(this)){
+                gui.Default = SCREENS.CARDSPAGE;
+            }
 
         } else if (gui.Default == SCREENS.TESTCREATION) {
             gui.createTestUI.mousePressed(this);
-            gui.testId= gui.pageTest.getSelectedCardTitle();
-            gui.questions = db.getQuestionsOfMultipleChoiceTest(gui.testId);
-            gui.answers = db.getAnswersOfMultipleChoiceTest(gui.questions);
-            gui.correctIndex = db.getCorrectAnswerIndexesOfMultipleChoiceTest(gui.questions);
+            gui.titleTest.isPressed(this);
+            if (gui.createTestUI.TestDone && !gui.testInserted) {
+                String[] questions = gui.createTestUI.getQuestions();
+                String[] answers = gui.createTestUI.getAnswers();
+                int[] indexes = gui.createTestUI.getCorrectIndexes();
+                db.insertTestData(gui.testId, questions, answers, indexes);
+                gui.testInserted = true;
+            }
 
-        } else if (gui.Default == SCREENS.TEST){
+            if (gui.createTestUI.TestDone && gui.createTestUI.finishButton.mouseOverButton(this)) {
+                gui.Default = SCREENS.QUIZPAGE;
+            }
+        }
+        else if (gui.Default == SCREENS.TEST){
             gui.visualiveTestUI.mousePressed(this);
-            gui.testId = gui.pageTest.getSelectedCardTitle();
-            String[] questions = gui.visualiveTestUI.getQuestions();
-            String[] answers = gui.visualiveTestUI.getAnswers();
-            int[] correct = gui.visualiveTestUI.getCorrectIndexes();
-            db.insertTestData(gui.testId, questions,answers,correct);
+            if (gui.visualiveTestUI.finishButton.mouseOverButton(this)){
+                gui.Default = SCREENS.QUIZPAGE;
+            }
 
             // ----------------------------------- * (NOT) DONE PAGE * ----------------------------------- //
         } else if (gui.Default == SCREENS.NOTDONELESSONS){
@@ -497,6 +504,21 @@ public class Studive extends PApplet {
             gui.pageTest.setCards();
             gui.pageTest.setImages(gui.flashcardIcon, gui.pdfIcon, gui.linkIcon, gui.testIcon);
         }
+    }
+
+    public void loadVisualizeFlashcard(){
+        gui.flashCardId = gui.pageFlashCards.getSelectedCardTitle();
+        gui.questions = db.getQuestionsOfAFlashCard(gui.flashCardId);
+        gui.answers = db.getAnswersOfAFlashCard(gui.questions);
+        gui.visualizeFlashCardUI = new FlashCard(this, gui.questions, gui.answers);
+    }
+
+    public void loadVisualizeTest(){
+        gui.questionaireID = gui.pageTest.getSelectedCardTitle();
+        gui.questions = db.getQuestionsOfMultipleChoiceTest(gui.flashCardId);
+        gui.answers = db.getAnswersOfMultipleChoiceTest(gui.questions);
+        gui.correctIndex = db.getCorrectAnswerIndexesOfMultipleChoiceTest(gui.questions);
+        gui.visualiveTestUI = new MultipleChoiceQuiz(this,gui.questions,gui.questions,gui.correctIndex);
     }
 
 }

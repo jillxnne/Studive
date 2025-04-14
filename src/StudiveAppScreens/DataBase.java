@@ -1,5 +1,6 @@
 package StudiveAppScreens;
 
+import java.awt.desktop.SystemEventListener;
 import java.sql.*;
 
 public class DataBase {
@@ -114,12 +115,14 @@ public class DataBase {
                 q += "('" + questions[i] + "', '" + testId + "')";
                 if (i < questions.length - 1) q += ", ";
             }
+            System.out.println(q);
             query.execute(q);
 
             for (int i = 0; i < answers.length; i++) {
-                s += "('" + answers[i] + "', (SELECT ID FROM pregunta WHERE PREGUNTA_ID = '" + questions[i] + "')";
+                s += "('" + answers[i] + "', '" + questions[i] + "')";
                 if (i < answers.length - 1) s += ", ";
             }
+            System.out.println(s);
             query.execute(s);
         } catch (Exception e) {
             System.out.println(e);
@@ -127,20 +130,24 @@ public class DataBase {
     }
     public void insertTestData(String testId, String[] questions, String[] answers, int[] correctAnswerIndexes) {
         String insertQuestionsQuery = "INSERT INTO pregunta (ID, PRUEBA_ID) VALUES ";
-        String insertAnswersQuery = "INSERT INTO opcion (ID, PREGUNTA_ID, CORRECTO, NUMERO) VALUES ";
+        String insertAnswersQuery = "INSERT INTO opcion (PREGUNTA_ID, ID, CORRECTO, NUMERO) VALUES ";
 
         try {
             for (int i = 0; i < questions.length; i++) {
-                insertQuestionsQuery += "('" + questions[i] + "', '" + testId + "')";
+                insertQuestionsQuery += "('" + questions[i] +"', '" + testId + "')";
                 if (i < questions.length - 1) insertQuestionsQuery += ", ";
-            }
-            query.execute(insertQuestionsQuery);
 
-            for (int i = 0; i < answers.length; i++) {
-                insertAnswersQuery += "('" + answers[i] + "', '" + questions[i] + "', '"+correctAnswerIndexes[i]+"', '"+i+"')";
-                if (i < answers.length - 1) insertAnswersQuery += ", ";
+                System.out.println(insertQuestionsQuery);
+                query.execute(insertQuestionsQuery);
+
+                for (int j = 0; j < 3; j++) {
+                    int answerIndex = i * 3 + j;
+                    insertAnswersQuery += "('" + questions[i] + "', '" + answers[answerIndex] + "', '" + correctAnswerIndexes[answerIndex] + "', '" + j + "')";
+                    if (answerIndex < answers.length - 1) insertAnswersQuery += ", ";
+                }
+                System.out.println(insertAnswersQuery);
+                query.execute(insertAnswersQuery);
             }
-            query.execute(insertAnswersQuery);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -300,6 +307,7 @@ public class DataBase {
                    " WHERE PRUEBA_ID = '"+testId+"' ";
         System.out.println(q);
         try{
+            System.out.println(q);
             ResultSet rs = query.executeQuery(q);
             int n = 0;
             while (rs.next()){
@@ -319,6 +327,7 @@ public class DataBase {
             String q = "SELECT ID FROM opcion WHERE PREGUNTA_ID = '" + questions[i] + "'";
             System.out.println("Query for question " + questions[i] + ": " + q);
             try {
+                System.out.println(q);
                 ResultSet rs = query.executeQuery(q);
                 if (rs.next()) {
                     answers[i] = rs.getString("ID");
@@ -356,54 +365,50 @@ public class DataBase {
         return questionTexts;
     }
 
-    public String[] getAnswersOfMultipleChoiceTest(String[] testId) {
-        String qNum = "SELECT COUNT(*) AS num FROM opcion WHERE PREGUNTA_ID  = '" + testId + "')";
-        int numRows = getNumFilesThatMatchQuery(qNum);
-        String[] answers = new String[numRows];
+    public String[] getAnswersOfMultipleChoiceTest(String[] testIds) {
+        String[] answers = new String[testIds.length * 3];
 
-        String q = "SELECT ID FROM opcion WHERE PREGUNTA_ID = '" + testId + "'";
-        System.out.println(q);
+        for (int i = 0; i < testIds.length; i++) {
+            String q = "SELECT ID FROM opcion WHERE PREGUNTA_ID = '" + testIds[i] + "'";
+            System.out.println(q);
 
-        try {
-            ResultSet rs = query.executeQuery(q);
-            int n = 0;
-            while (rs.next()) {
-                answers[n] = rs.getString("ID");
-                n++;
+            try {
+                System.out.println(q);
+                ResultSet rs = query.executeQuery(q);
+                int j = 0;
+                while (rs.next() && j < 3) {
+                    answers[i * 3 + j] = rs.getString("ID");
+                    j++;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
             }
-        } catch (Exception e) {
-            System.out.println(e);
         }
-
         return answers;
     }
 
-    public int[] getCorrectAnswerIndexesOfMultipleChoiceTest(String[] testID) {
-        String qNum = "SELECT COUNT(*) AS num FROM opcion WHERE PREGUNTA_ID = '" + testID + "'";
-        int numRows = getNumFilesThatMatchQuery(qNum);
-        int[] correctIndexes = new int[numRows];
+    public int[] getCorrectAnswerIndexesOfMultipleChoiceTest(String[] testIds) {
+        int[] correctIndexes = new int[testIds.length];
 
-        String q = "SELECT CORRECTO FROM opcion WHERE PREGUNTA_ID = '" + testID + "'";
-        System.out.println(q);
+        for (int i = 0; i < testIds.length; i++) {
+            String q = "SELECT CORRECTO FROM opcion WHERE PREGUNTA_ID = '" + testIds[i] + "'";
+            System.out.println(q);
 
-        try {
-            ResultSet rs = query.executeQuery(q);
-            int n = 0;
-            while (rs.next()) {
-                correctIndexes[n] = rs.getInt("CORRECTO");
-                n++;
+            try {
+                System.out.println(q);
+                ResultSet rs = query.executeQuery(q);
+                if (rs.next()) {
+                    correctIndexes[i] = rs.getInt("CORRECTO");
+                }
+            } catch (Exception e) {
+                System.out.println(e);
             }
-        } catch (Exception e) {
-            System.out.println(e);
         }
 
         return correctIndexes;
     }
 
     // ----------------------------------------- * UPDATES * ----------------------------------------- //
-    public void updateSubjectInfo(){
-
-    }
     public void updateDone(String typeOfDoc, String title){
         String docType = getTypeOfDocId(typeOfDoc);
         if (docType != null){

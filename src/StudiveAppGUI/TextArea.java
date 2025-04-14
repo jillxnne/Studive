@@ -89,18 +89,14 @@ public class TextArea {
         updateLines();
     }
     public boolean mouseOverTextField(PApplet p5) {
-        println(p5.mouseX, p5.mouseY);
         return (p5.mouseX >= this.x && p5.mouseX <= this.x + this.w && p5.mouseY >= this.y && p5.mouseY <= this.y + this.h);
     }
     public void isPressed(PApplet p5) {
-        println("MOUSE PRESSED");
         if (mouseOverTextField(p5)) {
             selected = true;
         } else {
             selected = false;
         }
-
-        println("SELECTED: "+selected);
     }
 
     public void setText(String s) {

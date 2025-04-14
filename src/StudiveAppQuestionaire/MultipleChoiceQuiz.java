@@ -11,9 +11,9 @@ public class MultipleChoiceQuiz {
     boolean enteringQuestions;
     boolean enteringAnswers;
     boolean enteringAnswersCorrectIndex;
-    boolean doneTest;
+    public boolean doneTest;
     boolean isEditionMode;
-    boolean TestDone;
+    public boolean TestDone;
     int numQuestions;
     int currentInputAnswerIndex;
     int correctAnswers;
@@ -21,13 +21,13 @@ public class MultipleChoiceQuiz {
     String currentQuestion;
     String[] currentAnswers;
     int correctAnswerIndex;
-    Button saveButton;
-    Button nextButton;
-    Button checkButton;
-    Button finishButton;
+    public Button saveButton;
+    public Button nextButton;
+    public Button checkButton;
+    public Button finishButton;
     Button[] answerButtons;
     int selectedAnswerIndex = -1;
-    TextArea numOfQuestions, question, answers, answerCorrectIndex;
+    public TextArea numOfQuestions, question, answers, answerCorrectIndex;
     int cardX = 450, cardY = 250, cardW = 1000, cardH = 600;
 
     public MultipleChoiceQuiz(PApplet p5, boolean isEditionMode) {
@@ -68,7 +68,6 @@ public class MultipleChoiceQuiz {
             answerButtons[i] = new Button(p5, "", cardX + 200 + (i * 200), cardY + 350, 150, 50);
         }
     }
-
     public MultipleChoiceQuiz(PApplet p5, String[] questions, String[] answers, int[] correctIndexes) {
         this(p5, false); // view mode off by default
         if (questions != null && answers != null && correctIndexes != null) {
@@ -76,13 +75,10 @@ public class MultipleChoiceQuiz {
             isEditionMode = false; // Switch to view mode
         }
     }
-
     public static Question[] buildQuestionsFromDB(String[] questions, String[] answers, int[] correctIndexes) {
         int numberOfQuestions = questions.length;
         Question[] questionObjects = new Question[numberOfQuestions];
-
         for (int i = 0; i < numberOfQuestions; i++) {
-            // Each question has 3 answers (flat array like in FlashCard)
             String[] options = new String[] {
                     answers[i * 3],
                     answers[i * 3 + 1],
@@ -90,10 +86,8 @@ public class MultipleChoiceQuiz {
             };
             questionObjects[i] = new Question(questions[i], options, correctIndexes[i]);
         }
-
         return questionObjects;
     }
-
 
     public void keyPressed(char key, int keyCode) {
         if (awaitingNumQuestions) {
@@ -109,15 +103,12 @@ public class MultipleChoiceQuiz {
 
     public void display(PApplet p5) {
         p5.background(240);
-
         p5.fill(255);
         p5.stroke(0);
         p5.rect(cardX, cardY, cardW, cardH, 20);
-
         if (isEditionMode && !TestDone) {
             saveButton.display(p5);
             p5.fill(0);
-
             if (awaitingNumQuestions) {
                 p5.textAlign(PApplet.CENTER, PApplet.CENTER);
                 p5.textSize(20);
@@ -139,11 +130,9 @@ public class MultipleChoiceQuiz {
                 p5.text("Selecciona el índice de la respuesta correcta (0-2):", cardX + cardW / 2, 520);
                 answerCorrectIndex.display(p5);
             }
-
         } else if (!isEditionMode && !TestDone) {
             nextButton.display(p5);
             checkButton.display(p5);
-
             if (currentQuestionIndexToShow < questions.length) {
                 p5.fill(0);
                 p5.textAlign(PApplet.CENTER, PApplet.CENTER);
@@ -174,7 +163,6 @@ public class MultipleChoiceQuiz {
             p5.text("¡Test finalizado!", cardX + cardW / 2, cardY + 150);
             finishButton.display(p5);
         }
-
     }
 
     public void mousePressed(PApplet p5) {
@@ -217,7 +205,7 @@ public class MultipleChoiceQuiz {
                     resetQuestionData();
                     if (currentQuestionIndex == questions.length) {
                         enteringAnswersCorrectIndex = false;
-                        TestDone = true;
+                        TestDone = true; // Ensure TestDone is set to true here
                     } else {
                         enteringQuestions = true;
                     }
@@ -225,6 +213,7 @@ public class MultipleChoiceQuiz {
             }
         }
 
+        // Handle button clicks for checking, next question, and finalizing the test
         for (int i = 0; i < answerButtons.length; i++) {
             if (answerButtons[i].checkClick(p5)) {
                 selectedAnswerIndex = i;
@@ -246,7 +235,6 @@ public class MultipleChoiceQuiz {
             }
         }
 
-
         if (nextButton.checkClick(p5)) {
             if (currentQuestionIndexToShow < questions.length - 1) {
                 currentQuestionIndexToShow++;
@@ -254,8 +242,6 @@ public class MultipleChoiceQuiz {
             }
         }
 
-        if (finishButton.checkClick(p5)) {
-        }
     }
 
     public void resetQuestionData() {
