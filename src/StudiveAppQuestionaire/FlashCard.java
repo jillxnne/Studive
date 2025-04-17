@@ -4,23 +4,64 @@ import StudiveAppGUI.Button;
 import StudiveAppGUI.TextArea;
 import processing.core.PApplet;
 
+/**
+ * La clase {@code FlashCard} representa un conjunto de tarjetas educativas interactivas.
+ * Permite crear, editar y visualizar tarjetas de preguntas y respuestas (flashcards) mediante una interfaz gráfica.
+ * Puede funcionar en modo de edición o revisión.
+ */
 public class FlashCard {
-    Card[] cards;
-    int currentIndex;
-    boolean showAnswer;
-    boolean awaitingNumCards;
-    boolean enteringQuestions;
-    boolean enteringAnswers;
-    boolean isEditionMode;
-    public boolean isCompleted;
-    boolean hasFinishedViewing;
-    public TextArea question, answer, numOfCards;
-    int cardIndex;
 
+    /** Arreglo de objetos {@link Card} que representan las tarjetas creadas. */
+    public Card[] cards;
+
+    /** Índice actual de la tarjeta mostrada. */
+    int currentIndex;
+
+    /** Indica si se debe mostrar la respuesta en lugar de la pregunta. */
+    boolean showAnswer;
+
+    /** Indica si el usuario aún debe introducir el número de tarjetas a crear. */
+    public boolean awaitingNumCards;
+
+    /** Indica si el usuario está introduciendo las preguntas. */
+    public boolean enteringQuestions;
+
+    /** Indica si el usuario está introduciendo las respuestas. */
+    public boolean enteringAnswers;
+
+    /** Indica si el sistema está en modo de edición (creación de tarjetas). */
+    public boolean isEditionMode;
+
+    /** Indica si el proceso de edición ha sido completado. */
+    public boolean isCompleted;
+
+    /** Indica si se han revisado todas las tarjetas. */
+    boolean hasFinishedViewing;
+
+    /** Campo de texto para la pregunta actual. */
+    public TextArea question;
+
+    /** Campo de texto para la respuesta actual. */
+    public TextArea answer;
+
+    /** Campo de texto para ingresar la cantidad de tarjetas a crear. */
+    public TextArea numOfCards;
+
+    /** Índice de la tarjeta que se está editando actualmente. */
+    public int cardIndex;
+
+    /** Botones para navegar, alternar, confirmar y finalizar. */
     public Button nextButton, prevButton, toggleButton, confirmButton, doneButton;
 
+    /** Coordenadas y dimensiones del área donde se muestra la tarjeta. */
     int cardX = 450, cardY = 250, cardW = 1000, cardH = 600;
 
+    /**
+     * Constructor principal. Inicializa los campos visuales y lógicos.
+     *
+     * @param p5         Instancia de la aplicación Processing.
+     * @param createOnly Indica si se entra en modo edición (true) o modo revisión (false).
+     */
     public FlashCard(PApplet p5, boolean createOnly) {
         cards = new Card[0];
         currentIndex = 0;
@@ -37,13 +78,20 @@ public class FlashCard {
         nextButton = new Button(p5, "Siguiente", cardX + cardW - 200, 700, 100, 50);
         prevButton = new Button(p5, "Anterior", cardX + 100, 700, 100, 40);
         toggleButton = new Button(p5, "Mostrar", cardX + cardW / 2 - 50, 700, 100, 50);
-        doneButton = new Button(p5, "Finalizar", cardX + cardW / 2 - 50, 700, 100, 50);
+        doneButton = new Button(p5, "Finalizar", cardX + cardW / 2 - 50, 600, 100, 50);
 
         question = new TextArea(p5, 670, 550, 550, 40, 40, 23);
         answer = new TextArea(p5, 670, 550, 550, 40, 40, 23);
         numOfCards = new TextArea(p5, 900, 550, 100, 40, 40, 23);
     }
 
+    /**
+     * Constructor alternativo que permite crear tarjetas desde arreglos de preguntas y respuestas.
+     *
+     * @param p5        Instancia de Processing.
+     * @param questions Arreglo de preguntas.
+     * @param answers   Arreglo de respuestas correspondientes.
+     */
     public FlashCard(PApplet p5, String[] questions, String[] answers) {
         this(p5, false);
         if (questions != null && questions.length > 0) {
@@ -55,6 +103,9 @@ public class FlashCard {
         }
     }
 
+    /**
+     * Avanza a la siguiente tarjeta. Si es la última y ya se mostró la respuesta, se marca como finalizada la revisión.
+     */
     void nextCard() {
         if (cards.length > 0) {
             if (currentIndex == cards.length - 1 && showAnswer) {
@@ -66,6 +117,9 @@ public class FlashCard {
         }
     }
 
+    /**
+     * Retrocede a la tarjeta anterior.
+     */
     void previousCard() {
         if (cards.length > 0) {
             currentIndex = (currentIndex - 1 + cards.length) % cards.length;
@@ -73,10 +127,18 @@ public class FlashCard {
         }
     }
 
+    /**
+     * Alterna entre mostrar la pregunta y la respuesta.
+     */
     void toggleAnswer() {
         showAnswer = !showAnswer;
     }
 
+    /**
+     * Muestra visualmente la tarjeta actual, ya sea en modo edición o revisión.
+     *
+     * @param p5 Instancia de Processing usada para dibujar en la pantalla.
+     */
     public void display(PApplet p5) {
         p5.fill(255);
         p5.stroke(0);
@@ -88,7 +150,6 @@ public class FlashCard {
 
         if (isEditionMode && !isCompleted) {
             confirmButton.display(p5);
-
             if (awaitingNumCards) {
                 p5.textSize(20);
                 p5.text("¿Cuántas tarjetas quieres crear?", cardX + cardW / 2, 520);
@@ -107,7 +168,7 @@ public class FlashCard {
 
         } else if (isCompleted) {
             p5.textSize(20);
-            p5.text("¡Tarjetas creadas con éxito!", cardX + cardW / 2, cardY + cardH / 2);
+            p5.text("¡Tarjetas creadas con éxito!", cardX + cardW / 2, 520);
             doneButton.display(p5);
 
         } else {
@@ -119,7 +180,7 @@ public class FlashCard {
                 p5.textSize(18);
                 p5.fill(255);
                 if (cards.length > 0) {
-                    if (!showAnswer) {
+                    if (showAnswer) {
                         cards[currentIndex].displayQuestion(p5, cardX + cardW / 2, cardY + cardH / 2);
                     } else {
                         cards[currentIndex].displayAnswer(p5, cardX + cardW / 2, cardY + cardH / 2);
@@ -129,12 +190,18 @@ public class FlashCard {
             } else {
                 p5.textSize(20);
                 p5.fill(0);
-                p5.text("Has completado todas las flashcards.", cardX + cardW / 2, cardY + 50);
+                p5.text("Has completado todas las flashcards.", cardX + cardW / 2, 520);
                 doneButton.display(p5);
             }
         }
     }
 
+    /**
+     * Gestiona la entrada de teclado y la asigna al campo correspondiente.
+     *
+     * @param key     Tecla presionada.
+     * @param keyCode Código de la tecla presionada.
+     */
     public void keyPressed(char key, int keyCode) {
         if (awaitingNumCards) {
             numOfCards.keyPressed(key, keyCode);
@@ -145,47 +212,17 @@ public class FlashCard {
         }
     }
 
+    /**
+     * Maneja los clics del ratón sobre las áreas interactivas.
+     *
+     * @param p5 Instancia de Processing usada para detectar clics.
+     */
     public void mousePressed(PApplet p5) {
         numOfCards.isPressed(p5);
         question.isPressed(p5);
         answer.isPressed(p5);
-
-        if (confirmButton.checkClick(p5)) {
-            if (awaitingNumCards) {
-                try {
-                    int num = Integer.parseInt(numOfCards.getText());
-                    numOfCards.clear();
-                    if (num > 0) {
-                        cards = new Card[num];
-                        awaitingNumCards = false;
-                        enteringQuestions = true;
-                    }
-                } catch (Exception ignored) {}
-            } else if (enteringQuestions) {
-                String q = question.getText();
-                question.clear();
-                if (!q.isEmpty()) {
-                    cards[cardIndex] = new Card(q, "");
-                    enteringQuestions = false;
-                    enteringAnswers = true;
-                }
-            } else if (enteringAnswers) {
-                String a = answer.getText();
-                answer.clear();
-                if (!a.isEmpty()) {
-                    cards[cardIndex].answer = a;
-                    cardIndex++;
-                    if (cardIndex >= cards.length) {
-                        enteringAnswers = false;
-                        isCompleted = true;
-                        isEditionMode = false;
-                        cardIndex = 0;
-                    } else {
-                        enteringQuestions = true;
-                    }
-                }
-            }
-        }
+        confirmButton.checkClick(p5);
+        doneButton.mouseOverButton(p5);
 
         if (!isEditionMode && cards.length > 0) {
             if (nextButton.checkClick(p5)) {
@@ -200,6 +237,11 @@ public class FlashCard {
         }
     }
 
+    /**
+     * Devuelve un arreglo con las preguntas de todas las tarjetas creadas.
+     *
+     * @return Arreglo de strings con las preguntas.
+     */
     public String[] getQuestions() {
         String[] questions = new String[cards.length];
         for (int i = 0; i < cards.length; i++) {
@@ -208,6 +250,11 @@ public class FlashCard {
         return questions;
     }
 
+    /**
+     * Devuelve un arreglo con las respuestas de todas las tarjetas creadas.
+     *
+     * @return Arreglo de strings con las respuestas.
+     */
     public String[] getAnswers() {
         String[] answers = new String[cards.length];
         for (int i = 0; i < cards.length; i++) {

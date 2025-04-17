@@ -1,12 +1,9 @@
 package StudiveAppScreens;
 import StudiveAppGUI.PagedCard;
 import StudiveAppGUI.PagedSubject;
+import StudiveAppQuestionaire.Card;
 import StudiveAppQuestionaire.FlashCard;
-import StudiveAppQuestionaire.MultipleChoiceQuiz;
 import processing.core.PApplet;
-
-import javax.xml.crypto.Data;
-
 import static StudiveAppLayout.Layout.IDwidth;
 import static StudiveAppLayout.Layout.RecentLecturewidth;
 import static StudiveAppScreens.GUI.*;
@@ -27,7 +24,6 @@ public class Studive extends PApplet {
         background(255);
         db = new DataBase("admin", "12345", "studive");
         db.connect();
-
         gui = new GUI(this, db);
     }
 
@@ -48,17 +44,8 @@ public class Studive extends PApplet {
             case ADDSUBJECT:
                 gui.drawAddSubject(this);
                 break;
-            case ADDPDF:
-                gui.drawAddPDF(this);
-                break;
             case ADDCARD:
                 gui.drawAddCards(this);
-                break;
-            case ADDLINK:
-                gui.drawAddLink(this);
-                break;
-            case ADDQUIZ:
-                gui.drawAddTest(this);
                 break;
             case FLASHCARDCREATION:
                 gui.drawFlashCardCreatePage(this);
@@ -66,69 +53,31 @@ public class Studive extends PApplet {
             case FLASHCARDTEST:
                 gui.drawFlashCardVisualizePage(this);
                 break;
-            case TESTCREATION:
-                gui.drawTestCreatePage(this);
-                break;
-            case TEST:
-                gui.drawTestVisualizePage(this);
-                break;
             case DONELESSONS:
+                loadStateOfCardPage();
                 gui.drawDoneLessons(this);
                 break;
             case NOTDONELESSONS:
+                loadStateOfCardPage();
                 gui.drawNotDoneLessons(this);
                 break;
-            case MAINLESSONS:
-                gui.drawMainLessons(this);
-                break;
-            case GENERALSTATISTICS:
-                gui.drawGeneralStatistics(this);
-                break;
-            case MAINSTATISTICS:
-                gui.drawMainStatistics(this);
-                break;
-            case PDFPAGE:
-                loadTypeOfDocOrTestPage();
-                gui.drawPDF(this);
-                break;
-            case LINKSPAGE:
-                loadTypeOfDocOrTestPage();
-                gui.drawLink(this);
-                break;
-            case QUIZPAGE:
-                loadTypeOfDocOrTestPage();
-                gui.drawTest(this);
-                break;
             case CARDSPAGE:
-                loadTypeOfDocOrTestPage();
+                loadFlashCardPage();
                 gui.drawFlashcard(this);
                 break;
         }
     }
     public void keyPressed() {
-        gui.Lection.keyPressed(key, keyCode);
-        gui.namechange.keyPressed(key, keyCode);
         gui.subjecttitle.keyPressed(key, keyCode);
         gui.titleTest.keyPressed(key, keyCode);
         gui.descriptionTest.keyPressed(key, keyCode);
-        gui.titleDoc.keyPressed(key, keyCode);
-        gui.descriptionDoc.keyPressed(key, keyCode);
         gui.username.keyPressed(key,keyCode);
         gui.password.keyPressed(key,keyCode);
         if(gui.createFlashCardUI!=null) {
             gui.createFlashCardUI.keyPressed(key, keyCode);
         }
-        if(gui.createTestUI!=null) {
-            gui.createTestUI.keyPressed(key, keyCode);
-        }
-        if(gui.visualiveTestUI!=null){
-            gui.visualiveTestUI.keyPressed(key, keyCode);
-        }
-        if(gui.visualiveTestUI!=null){
-            gui.visualiveTestUI.keyPressed(key,keyCode);
-        }
-        if (key =='0'){
-            gui.Default = SCREENS.LOGINPAGE;
+        if(gui.visualizeFlashCardUI!=null){
+            gui.visualizeFlashCardUI.keyPressed(key, keyCode);
         }
     }
 
@@ -137,17 +86,12 @@ public class Studive extends PApplet {
         if (gui.Default == SCREENS.LOGINPAGE){
             gui.password.isPressed(this);
             gui.username.isPressed(this);
-
             String username = gui.username.getText();
             String password = gui.password.getText();
 
             if (gui.login.mouseOverButton(this) && db.Login(username, password)){
                 gui.Default = SCREENS.HOMEPAGE;
-                gui.username.clear();
-                gui.password.clear();
-            }
-
-            if (gui.goToSignIn.mouseOverButton(this)){
+            } else if (gui.goToSignIn.mouseOverButton(this)){
                 gui.Default = SCREENS.SIGNINPAGE;
             }
         }
@@ -166,27 +110,31 @@ public class Studive extends PApplet {
 
         // --------------------------------------- * HOME PAGE * --------------------------------------- //
         else if (gui.Default == SCREENS.HOMEPAGE) {
-            mainBarFunctions(this);
+            mainBarFunctions();
+            gui.HomePageCard.checkCardSelection(this);
             if (gui.doneLections.mouseOverButton(this)) {
                 gui.Default = SCREENS.NOTDONELESSONS;
-            }
-            if (gui.notDoneLections.mouseOverButton(this)){
+            } else if (gui.notDoneLections.mouseOverButton(this)){
                 gui.Default = SCREENS.DONELESSONS;
-            }
-            if (gui.HomePageCard.checkMouseOver(this)) {
-                gui.Default = SCREENS.MAINLESSONS;
+            } else if (gui.HomePageCard.checkMouseOver(this)) {
+                gui.flashCardId = gui.HomePageCard.getSelectedCardTitle();
+                gui.questions = db.getQuestionsOfAFlashCard(gui.flashCardId);
+                gui.answers = db.getAnswersOfAFlashCard(gui.questions);
+                gui.visualizeFlashCardUI = new FlashCard(this, gui.questions, gui.answers);
+                db.updateFechaOfTest(gui.flashCardId);
+                db.updateDone(gui.flashCardId);
+                gui.Default = SCREENS.FLASHCARDTEST;
             }
 
-            // ------------------------------------- * SUBJECT PAGE * ------------------------------------- //
+        // ------------------------------------- * SUBJECT PAGE * ------------------------------------- //
         } else if (gui.Default == SCREENS.SUBJECTPAGE) {
-            mainBarFunctions(this);
+            mainBarFunctions();
+            gui.Subjects.checkSubjectSelection(this);
             if (gui.plus.mouseOverButton(this)){
                 gui.Default = SCREENS.ADDSUBJECT;
-            }
-            if (gui.Subjects.checkMouseOver(this)) {
-                gui.Default = SCREENS.PDFPAGE;
-            }
-            if (gui.NextSubject.mouseOverButton(this) && gui.NextSubject.isEnabled()) {
+            } else if (gui.Subjects.checkMouseOver(this)) {
+                gui.Default = SCREENS.CARDSPAGE;
+            } else if (gui.NextSubject.mouseOverButton(this) && gui.NextSubject.isEnabled()) {
                 gui.Subjects.nextPage();
             } else if (gui.PreviousSubject.mouseOverButton(this) && gui.PreviousSubject.isEnabled()) {
                 gui.Subjects.prevPage();
@@ -199,111 +147,32 @@ public class Studive extends PApplet {
             gui.colorss.checkMouseOver(this,800,520,300);
             String titleSubject = gui.subjecttitle.getText();
             String color = gui.colorss.getSelectedColorAsString(this);
-
             if (gui.create.mouseOverButton(this) && (!titleSubject.equals("") && !color.equals(""))){
                 db.insertSubject(titleSubject,color);
                 loadSubjectPage();
+                gui.subjecttitle.clear();
+                gui.Default=SCREENS.SUBJECTPAGE;
+            } else if (gui.subjectback.mouseOverButton(this)){
                 gui.Default=SCREENS.SUBJECTPAGE;
             }
-            if (gui.subjectback.mouseOverButton(this)){
-                gui.Default=SCREENS.SUBJECTPAGE;
-            }
 
-            // ----------------------------------- * DOCS / TEST PAGE * ----------------------------------- //
-        } else if (gui.Default == SCREENS.PDFPAGE){
-            upperBarFunctions(this);
-            if (gui.pagePDF != null && gui.pagePDF.checkMouseOver(this)) {
-                gui.Default = SCREENS.MAINLESSONS;
-            }
-            if ((gui.addFile != null && gui.addFile.mouseOverButton(this)) ||
-                    (gui.add0File != null && gui.add0File.mouseOverButton(this))) {
-                gui.Default = SCREENS.ADDPDF;
-            }
-
-        } else if (gui.Default == SCREENS.QUIZPAGE){
-            upperBarFunctions(this);
-            gui.pageTest.checkCardSelection(this);
-            if (gui.pageTest != null && gui.pageTest.checkMouseOver(this)) {
-                loadVisualizeTest();
-                gui.Default = SCREENS.TEST;
-            }
-            if ((gui.addFile != null && gui.addFile.mouseOverButton(this)) ||
-                    (gui.add0File != null && gui.add0File.mouseOverButton(this))) {
-                gui.Default = SCREENS.ADDQUIZ;
-            }
-
-        } else if (gui.Default == SCREENS.LINKSPAGE){
-            upperBarFunctions(this);
-            if (gui.pageLink != null && gui.pageLink.checkMouseOver(this)) {
-                gui.Default = SCREENS.MAINLESSONS;
-            }
-            if ((gui.addFile != null && gui.addFile.mouseOverButton(this)) ||
-                    (gui.add0File != null && gui.add0File.mouseOverButton(this))) {
-                gui.Default = SCREENS.ADDLINK;
-            }
-
+        // ------------------------------------- * CARD PAGE * ------------------------------------- //
         } else if (gui.Default == SCREENS.CARDSPAGE){
-            upperBarFunctions(this);
+            mainBarFunctions();
             gui.pageFlashCards.checkCardSelection(this);
             if (gui.pageFlashCards != null && gui.pageFlashCards.checkMouseOver(this)) {
-                loadVisualizeFlashcard();
+                gui.flashCardId = gui.pageFlashCards.getSelectedCardTitle();
+                gui.questions = db.getQuestionsOfAFlashCard(gui.flashCardId);
+                gui.answers = db.getAnswersOfAFlashCard(gui.questions);
+                gui.visualizeFlashCardUI = new FlashCard(this, gui.questions, gui.answers);
+                db.updateFechaOfTest(gui.flashCardId);
+                db.updateDone(gui.flashCardId);
                 gui.Default = SCREENS.FLASHCARDTEST;
-            }
-            if ((gui.addFile != null && gui.addFile.mouseOverButton(this)) ||
+            } else if ((gui.addFile != null && gui.addFile.mouseOverButton(this)) ||
                     (gui.add0File != null && gui.add0File.mouseOverButton(this))) {
                 gui.Default = SCREENS.ADDCARD;
-            }
-
-        } else if (gui.Default == SCREENS.ADDPDF){
-            String subjectName = gui.Subjects.getSelectedSubjectTitle();
-            gui.titleDoc.isPressed(this);
-            String title = gui.titleDoc.getText();
-            gui.descriptionDoc.isPressed(this);
-            String description = gui.descriptionDoc.getText();
-            String URL = " ";
-            upperBarFunctions(this);
-            if (gui.createDoc.mouseOverButton(this)){
-                db.insertDocument(title,description,URL,subjectName,"PDF");
-                gui.titleDoc.clear();
-                gui.descriptionDoc.clear();
-            }
-            if (gui.addDocTypeBackButton.mouseOverButton(this)){
-                gui.Default=SCREENS.PDFPAGE;
-            }
-
-        } else if (gui.Default == SCREENS.ADDQUIZ){
-            String subjectName = gui.Subjects.getSelectedSubjectTitle();
-            gui.titleTest.isPressed(this);
-            String title = gui.titleTest.getText();
-            gui.testId = gui.titleTest.getText();
-            gui.descriptionTest.isPressed(this);
-            String description = gui.descriptionTest.getText();
-            upperBarFunctions(this);
-            if (gui.createTest.mouseOverButton(this)){
-                db.insertTestOrFlashCardGenInfo(title,description,subjectName,"TEST");
-                gui.titleTest.clear();
-                gui.descriptionTest.clear();
-                gui.Default=SCREENS.TESTCREATION;
-            }
-            if (gui.addTestTypeBackButton.mouseOverButton(this)){
-                gui.Default=SCREENS.QUIZPAGE;
-            }
-
-        } else if (gui.Default == SCREENS.ADDLINK){
-            String subjectName = gui.Subjects.getSelectedSubjectTitle();
-            gui.titleDoc.isPressed(this);
-            String title = gui.titleDoc.getText();
-            gui.descriptionDoc.isPressed(this);
-            String description = gui.descriptionDoc.getText();
-            String URL = " ";
-            upperBarFunctions(this);
-            if (gui.createDoc.mouseOverButton(this)){
-                db.insertDocument(title, description,URL, subjectName, "LINK");
-                gui.titleDoc.clear();
-                gui.descriptionDoc.clear();
-            }
-            if (gui.addDocTypeBackButton.mouseOverButton(this)){
-                gui.Default=SCREENS.LINKSPAGE;
+            } else if(gui.flashCardBackButton.mouseOverButton(this)){
+                gui.Default = SCREENS.SUBJECTPAGE;
             }
 
         } else if (gui.Default == SCREENS.ADDCARD) {
@@ -314,63 +183,82 @@ public class Studive extends PApplet {
             gui.descriptionTest.isPressed(this);
             String description = gui.descriptionTest.getText();
             if (gui.createTest.mouseOverButton(this)) {
-                db.insertTestOrFlashCardGenInfo(title, description, subjectName, "FLASHCARD");
+                db.insertFlashCardGenInfo(title, description, subjectName);
                 gui.titleTest.clear();
                 gui.descriptionTest.clear();
                 gui.Default = SCREENS.FLASHCARDCREATION;
-            }
-            if (gui.addTestTypeBackButton.mouseOverButton(this)) {
-                gui.Default = SCREENS.CARDSPAGE;
-            }
-            // ----------------------------------- * TEST / CARD PAGE * ----------------------------------- //
-        } else if (gui.Default == SCREENS.FLASHCARDCREATION) {
-            gui.createFlashCardUI.mousePressed(this);
-            gui.titleTest.isPressed(this);
-                if (gui.createFlashCardUI.isCompleted && !gui.flashcardsInserted) {
-                    String[] questions = gui.createFlashCardUI.getQuestions();
-                    String[] answers = gui.createFlashCardUI.getAnswers();
-                    db.insertFlashCardInfo(questions, answers, gui.testId);
-                    gui.flashcardsInserted = true;
-                }
-            if (gui.createFlashCardUI.doneButton.mouseOverButton(this)){
+            } else if (gui.addTestTypeBackButton.mouseOverButton(this)) {
                 gui.Default = SCREENS.CARDSPAGE;
             }
 
+        // -------------------------------------- * CARD PAGE * -------------------------------------- //
+        } else if (gui.Default == SCREENS.FLASHCARDCREATION) {
+            gui.createFlashCardUI.mousePressed(this);
+            gui.titleTest.isPressed(this);
+            if (gui.createFlashCardUI.isCompleted && !gui.flashcardsInserted) {
+                String[] questions = gui.createFlashCardUI.getQuestions();
+                String[] answers = gui.createFlashCardUI.getAnswers();
+                db.insertFlashCardInfo(questions, answers, gui.testId);
+                gui.flashcardsInserted = true;
+            } else if (gui.createFlashCardUI.confirmButton.checkClick(this)) {
+                if (gui.createFlashCardUI.awaitingNumCards) {
+                    try {
+                        int num = Integer.parseInt(gui.createFlashCardUI.numOfCards.getText());
+                        gui.createFlashCardUI.numOfCards.clear();
+                        if (num > 0) {
+                            gui.createFlashCardUI.cards = new Card[num];
+                            gui.createFlashCardUI.awaitingNumCards = false;
+                            gui.createFlashCardUI.enteringQuestions = true;
+                        }
+                    } catch (Exception ignored) {}
+                } else if (gui.createFlashCardUI.enteringQuestions) {
+                    String q = gui.createFlashCardUI.question.getText();
+                    gui.createFlashCardUI.question.clear();
+                    if (!q.isEmpty()) {
+                        gui.createFlashCardUI.cards[gui.createFlashCardUI.cardIndex] = new Card(q, "");
+                        gui.createFlashCardUI.enteringQuestions = false;
+                        gui.createFlashCardUI.enteringAnswers = true;
+                    }
+                } else if (gui.createFlashCardUI.enteringAnswers) {
+                    String a = gui.createFlashCardUI.answer.getText();
+                    gui.createFlashCardUI.answer.clear();
+                    if (!a.isEmpty()) {
+                        gui.createFlashCardUI.cards[gui.createFlashCardUI.cardIndex].answer = a;
+                        gui.createFlashCardUI.cardIndex++;
+                        if (gui.createFlashCardUI.cardIndex >= gui.createFlashCardUI.cards.length) {
+                            gui.createFlashCardUI.enteringAnswers = false;
+                            gui.createFlashCardUI.isCompleted = true;
+                            gui.createFlashCardUI.isEditionMode = false;
+                            gui.createFlashCardUI.cardIndex = 0;
+                        } else {
+                            gui.createFlashCardUI.enteringQuestions = true;
+                        }
+                    }
+                }
+            } else if (gui.createFlashCardUI.doneButton.mouseOverButton(this) && gui.createFlashCardUI.isCompleted){
+                gui.Default = SCREENS.CARDSPAGE;
+            }
         } else if (gui.Default == SCREENS.FLASHCARDTEST) {
             gui.visualizeFlashCardUI.mousePressed(this);
             if (gui.visualizeFlashCardUI.doneButton.mouseOverButton(this)){
                 gui.Default = SCREENS.CARDSPAGE;
             }
 
-        } else if (gui.Default == SCREENS.TESTCREATION) {
-            gui.createTestUI.mousePressed(this);
-            gui.titleTest.isPressed(this);
-            if (gui.createTestUI.TestDone && !gui.testInserted) {
-                String[] questions = gui.createTestUI.getQuestions();
-                String[] answers = gui.createTestUI.getAnswers();
-                int[] indexes = gui.createTestUI.getCorrectIndexes();
-                db.insertTestData(gui.testId, questions, answers, indexes);
-                gui.testInserted = true;
-            }
-
-            if (gui.createTestUI.TestDone && gui.createTestUI.finishButton.mouseOverButton(this)) {
-                gui.Default = SCREENS.QUIZPAGE;
-            }
-        }
-        else if (gui.Default == SCREENS.TEST){
-            gui.visualiveTestUI.mousePressed(this);
-            if (gui.visualiveTestUI.finishButton.mouseOverButton(this)){
-                gui.Default = SCREENS.QUIZPAGE;
-            }
-
-            // ----------------------------------- * (NOT) DONE PAGE * ----------------------------------- //
+        // ----------------------------------- * (NOT) DONE PAGE * ----------------------------------- //
         } else if (gui.Default == SCREENS.NOTDONELESSONS){
-            mainBarFunctions(this);
-            if (gui.NotDonePageCard.checkMouseOver(this)) {
-                gui.Default = SCREENS.MAINLESSONS;
-            }
-
-            if (gui.stateOfLessonsNext.mouseOverButton(this) && gui.stateOfLessonsNext.isEnabled()) {
+            mainBarFunctions();
+            gui.NotDonePageCard.checkCardSelection(this);
+            if(gui.stateOfLessonBackButton.mouseOverButton(this)){
+                gui.Default = SCREENS.HOMEPAGE;
+            } else if (gui.NotDonePageCard.checkMouseOver(this)) {
+                gui.flashCardId = gui.NotDonePageCard.getSelectedCardTitle();
+                gui.questions = db.getQuestionsOfAFlashCard(gui.flashCardId);
+                gui.answers = db.getAnswersOfAFlashCard(gui.questions);
+                gui.visualizeFlashCardUI = new FlashCard(this, gui.questions, gui.answers);
+                db.updateFechaOfTest(gui.flashCardId);
+                db.updateDone(gui.flashCardId);
+                gui.Default = SCREENS.FLASHCARDTEST;
+            } else if (gui.stateOfLessonsNext.mouseOverButton(this) && gui.stateOfLessonsNext.isEnabled()) {
                 gui.NotDonePageCard.nextPage();
             } else if (gui.stateOfLessonsPrev.mouseOverButton(this) && gui.stateOfLessonsPrev.isEnabled()) {
                 gui.NotDonePageCard.prevPage();
@@ -379,86 +267,32 @@ public class Studive extends PApplet {
             }
 
         } else if (gui.Default == SCREENS.DONELESSONS){
-            mainBarFunctions(this);
-            if (gui.DonePageCard.checkMouseOver(this)) {
-                gui.Default = SCREENS.MAINLESSONS;
-            }
-            if (gui.stateOfLessonsNext.mouseOverButton(this) && gui.stateOfLessonsNext.isEnabled()) {
+            mainBarFunctions();
+            gui.DonePageCard.checkCardSelection(this);
+            if(gui.stateOfLessonBackButton.mouseOverButton(this)){
+                gui.Default = SCREENS.HOMEPAGE;
+            } else if (gui.DonePageCard.checkMouseOver(this)) {
+                gui.flashCardId = gui.DonePageCard.getSelectedCardTitle();
+                gui.questions = db.getQuestionsOfAFlashCard(gui.flashCardId);
+                gui.answers = db.getAnswersOfAFlashCard(gui.questions);
+                gui.visualizeFlashCardUI = new FlashCard(this, gui.questions, gui.answers);
+                db.updateFechaOfTest(gui.flashCardId);
+                db.updateDone(gui.flashCardId);
+                gui.Default = SCREENS.FLASHCARDTEST;
+            } else if (gui.stateOfLessonsNext.mouseOverButton(this) && gui.stateOfLessonsNext.isEnabled()) {
                 gui.DonePageCard.nextPage();
             } else if (gui.stateOfLessonsPrev.mouseOverButton(this) && gui.stateOfLessonsPrev.isEnabled()) {
                 gui.DonePageCard.prevPage();
             } else {
                 gui.DonePageCard.checkCardSelection(this);
             }
-
-            // ----------------------------- * SPECIFIC LECTION INFO PAGE * ----------------------------- //
-        } else if (gui.Default == SCREENS.MAINLESSONS) {
-            mainBarFunctions(this);
-            if (gui.typeOfLection.mouseOverSelect(this) && gui.typeOfLection.isEnabled()) {
-                if (!gui.typeOfLection.isCollapsed()) {
-                    gui.typeOfLection.update(this);
-                }
-                gui.typeOfLection.toggle();
-            } else {
-                gui.Lection.isPressed(this);
-            }
-            if (gui.done.onMouseOver(this)) {
-                gui.done.toggle();
-                if (gui.done.isChecked()){
-                    // db.updateDone();
-                }
-            }
-            if (gui.accessResults.mouseOverButton(this)) {
-                gui.Default = SCREENS.MAINSTATISTICS;
-            }
-            if (gui.mainlessonback.mouseOverButton(this)) {
-                gui.Default=SCREENS.PDFPAGE;
-            }
-
-        } else if (gui.Default == SCREENS.GENERALSTATISTICS) {
-            mainBarFunctions(this);
-            if (gui.mainPageStat.checkMouseOver(this)) {
-                gui.Default = SCREENS.MAINSTATISTICS;
-            }
-            if (gui.statNext.mouseOverButton(this) && gui.statNext.isEnabled()) {
-                gui.mainPageStat.nextPage();
-            } else if (gui.statPrev.mouseOverButton(this) && gui.statPrev.isEnabled()) {
-                gui.mainPageStat.prevPage();
-            } else {
-                gui.mainPageStat.checkCardSelection(this);
-            }
-
-        } else if (gui.Default == SCREENS.MAINSTATISTICS) ;
-        mainBarFunctions(this);
-        if (gui.statisticback.mouseOverButton(this)){
-            gui.Default=SCREENS.GENERALSTATISTICS;
         }
     }
-    public void mainBarFunctions(PApplet p5){
+    public void mainBarFunctions(){
         if (gui.home.mouseOverButton(this)) {
             gui.Default = SCREENS.HOMEPAGE;
-        }
-
-        if (gui.statistic.mouseOverButton(this)) {
-            gui.Default = SCREENS.GENERALSTATISTICS;
-        }
-
-        if (gui.foldermainbar.mouseOverButton(this)){
+        } else if (gui.foldermainbar.mouseOverButton(this)){
             gui.Default = SCREENS.SUBJECTPAGE;
-        }
-    }
-    public void upperBarFunctions(PApplet p5){
-        if (gui.PDFfiles.mouseOverButton(this)){
-            gui.Default = SCREENS.PDFPAGE;
-        }
-        if (gui.Flashcardsfiles.mouseOverButton(this)){
-            gui.Default = SCREENS.CARDSPAGE;
-        }
-        if (gui.Linksfiles.mouseOverButton(this)){
-            gui.Default = SCREENS.LINKSPAGE;
-        }
-        if (gui.Quizfiles.mouseOverButton(this)){
-            gui.Default = SCREENS.QUIZPAGE;
         }
     }
     public void loadSubjectPage(){
@@ -469,56 +303,31 @@ public class Studive extends PApplet {
         gui.Subjects.setData(gui.subjectsInfo);
         gui.Subjects.setSubjects(gui.mainfolderIcon);
     }
-    public void loadTypeOfDocOrTestPage() {
-        String selectedSubject = gui.Subjects.getSelectedSubjectTitle();
-
-        if (!selectedSubject.equals(gui.lastSubjectLoaded)) {
-            gui.lastSubjectLoaded = selectedSubject;
-            gui.subjectName = selectedSubject;
-
-            gui.pdfInfo = db.getTotalOfTypeOfLessonOfASubject("PDF", selectedSubject);
-            gui.pagePDF = new PagedCard(4);
-            gui.pagePDF.setDimensions(IDwidth - 400, 250, RecentLecturewidth + 100, 620);
-            gui.pagePDF.setData(gui.pdfInfo);
-            gui.pagePDF.setCards();
-            gui.pagePDF.setImages(gui.flashcardIcon, gui.pdfIcon, gui.linkIcon, gui.testIcon);
-
-            gui.flashcardsInfo = db.getTotalOfTypeOfLessonOfASubject("FLASHCARD", selectedSubject);
-            gui.pageFlashCards = new PagedCard(4);
-            gui.pageFlashCards.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
-            gui.pageFlashCards.setData(gui.flashcardsInfo);
-            gui.pageFlashCards.setCards();
-            gui.pageFlashCards.setImages(gui.flashcardIcon, gui.pdfIcon, gui.linkIcon,gui.testIcon);
-
-            gui.linkInfo = db.getTotalOfTypeOfLessonOfASubject("LINK", selectedSubject);
-            gui.pageLink = new PagedCard(4);
-            gui.pageLink.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
-            gui.pageLink.setData(gui.linkInfo);
-            gui.pageLink.setCards();
-            gui.pageLink.setImages(gui.flashcardIcon, gui.pdfIcon, gui.linkIcon,gui.testIcon);
-
-            gui.testInfo = db.getTotalOfTypeOfLessonOfASubject("TEST", selectedSubject);
-            gui.pageTest = new PagedCard(4);
-            gui.pageTest.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
-            gui.pageTest.setData(gui.testInfo);
-            gui.pageTest.setCards();
-            gui.pageTest.setImages(gui.flashcardIcon, gui.pdfIcon, gui.linkIcon, gui.testIcon);
-        }
+    public void loadFlashCardPage() {
+        gui.subjectName = gui.Subjects.getSelectedSubjectTitle();
+        gui.flashcardsInfo = db.getTotalOfTypeOfLessonOfASubject(gui.subjectName);
+        gui.pageFlashCards = new PagedCard(4);
+        gui.pageFlashCards.setDimensions(IDwidth-400,250, RecentLecturewidth+100, 620);
+        gui.flashcardsInfo = db.getTotalOfTypeOfLessonOfASubject(gui.subjectName);
+        gui.pageFlashCards.setData(gui.flashcardsInfo);
+        gui.pageFlashCards.setCards();gui.pageFlashCards.setImages(gui.flashcardIcon);
     }
 
-    public void loadVisualizeFlashcard(){
-        gui.flashCardId = gui.pageFlashCards.getSelectedCardTitle();
-        gui.questions = db.getQuestionsOfAFlashCard(gui.flashCardId);
-        gui.answers = db.getAnswersOfAFlashCard(gui.questions);
-        gui.visualizeFlashCardUI = new FlashCard(this, gui.questions, gui.answers);
-    }
+    public void loadStateOfCardPage(){
+        gui.doneTests = db.getTotalOfStateOfTests(1);
+        gui.DonePageCard = new PagedCard(5);
+        gui.DonePageCard.setDimensions(535,160, RecentLecturewidth+300, 700);
+        gui.doneTests = db.getTotalOfStateOfTests(1);
+        gui.DonePageCard.setData(gui.doneTests);
+        gui.DonePageCard.setCards();
+        gui.DonePageCard.setImages(gui.flashcardIcon);
 
-    public void loadVisualizeTest(){
-        gui.questionaireID = gui.pageTest.getSelectedCardTitle();
-        gui.questions = db.getQuestionsOfMultipleChoiceTest(gui.flashCardId);
-        gui.answers = db.getAnswersOfMultipleChoiceTest(gui.questions);
-        gui.correctIndex = db.getCorrectAnswerIndexesOfMultipleChoiceTest(gui.questions);
-        gui.visualiveTestUI = new MultipleChoiceQuiz(this,gui.questions,gui.questions,gui.correctIndex);
+        gui.notDoneTests = db.getTotalOfStateOfTests(0);
+        gui.NotDonePageCard = new PagedCard(5);
+        gui.NotDonePageCard.setDimensions(535,160, RecentLecturewidth+300, 700);
+        gui.notDoneTests = db.getTotalOfStateOfTests(0);
+        gui.NotDonePageCard.setData(gui.notDoneTests);
+        gui.NotDonePageCard.setCards();
+        gui.NotDonePageCard.setImages(gui.flashcardIcon);
     }
-
 }
