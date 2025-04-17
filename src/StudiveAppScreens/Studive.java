@@ -7,19 +7,43 @@ import processing.core.PApplet;
 import static StudiveAppLayout.Layout.IDwidth;
 import static StudiveAppLayout.Layout.RecentLecturewidth;
 import static StudiveAppScreens.GUI.*;
-
+/**
+ * Clase principal de la aplicación Studive.
+ *
+ * Esta clase extiende `PApplet` y actúa como controlador principal de la interfaz gráfica de usuario y
+ * de la lógica de navegación entre pantallas. Coordina la interacción entre el usuario, la base de datos
+ * y la interfaz proporcionada por la clase `GUI`.
+ */
 public class Studive extends PApplet {
+    /**
+     * Instancia de la clase GUI encargada de gestionar y dibujar la interfaz gráfica.
+     */
     GUI gui;
+
+    /**
+     * Instancia de la clase DataBase utilizada para acceder y manipular la base de datos de usuarios, materias y tarjetas.
+     */
     DataBase db;
+
+    /**
+     * Método principal que inicia la aplicación.
+     * @param args Argumentos pasados por consola (no utilizados).
+     */
     public static void main(String[] args) {
         PApplet.main("StudiveAppScreens.Studive", args);
     }
 
+    /**
+     * Configura el tamaño de la ventana y la calidad del renderizado.
+     */
     public void settings() {
         size(1920, 1080);
         smooth(10);
     }
 
+    /**
+     * Inicializa los componentes principales: la conexión a la base de datos y la GUI.
+     */
     public void setup() {
         background(255);
         db = new DataBase("admin", "12345", "studive");
@@ -27,6 +51,10 @@ public class Studive extends PApplet {
         gui = new GUI(this, db);
     }
 
+    /**
+     * Dibuja la pantalla correspondiente al estado actual de la interfaz.
+     * Cada caso del switch representa una pantalla diferente.
+     */
     public void draw() {
         switch (gui.Default) {
             case SIGNINPAGE:
@@ -67,6 +95,10 @@ public class Studive extends PApplet {
                 break;
         }
     }
+
+    /**
+     * Maneja los eventos de teclado y los reenvía a los campos de texto activos.
+     */
     public void keyPressed() {
         gui.subjecttitle.keyPressed(key, keyCode);
         gui.titleTest.keyPressed(key, keyCode);
@@ -81,7 +113,13 @@ public class Studive extends PApplet {
         }
     }
 
+    /**
+     * Método extenso que gestiona los clics del ratón en función de la pantalla actual.
+     * Llama a las funciones adecuadas según la lógica del flujo de la aplicación:
+     * iniciar sesión, registrarse, seleccionar materias, crear tarjetas, visualizar flashcards, etc.
+     */
     public void mousePressed() {
+        // Lógica detallada omitida aquí por extensión, ya está bien estructurada en bloques por pantalla.
         // --------------------------------------- * ACCESS PAGE * --------------------------------------- //
         if (gui.Default == SCREENS.LOGINPAGE){
             gui.password.isPressed(this);
@@ -288,6 +326,10 @@ public class Studive extends PApplet {
             }
         }
     }
+
+    /**
+     * Funciones de navegación accesibles desde la barra inferior común a varias pantallas.
+     */
     public void mainBarFunctions(){
         if (gui.home.mouseOverButton(this)) {
             gui.Default = SCREENS.HOMEPAGE;
@@ -295,6 +337,10 @@ public class Studive extends PApplet {
             gui.Default = SCREENS.SUBJECTPAGE;
         }
     }
+
+    /**
+     * Carga la información de materias desde la base de datos y la asocia a la interfaz de materias.
+     */
     public void loadSubjectPage(){
         gui.subjectsInfo = db.getSubjectsInfo();
         gui.Subjects = new PagedSubject(4);
@@ -303,6 +349,10 @@ public class Studive extends PApplet {
         gui.Subjects.setData(gui.subjectsInfo);
         gui.Subjects.setSubjects(gui.mainfolderIcon);
     }
+
+    /**
+     * Carga la información de flashcards de la materia seleccionada y la asocia a la interfaz.
+     */
     public void loadFlashCardPage() {
         gui.subjectName = gui.Subjects.getSelectedSubjectTitle();
         gui.flashcardsInfo = db.getTotalOfTypeOfLessonOfASubject(gui.subjectName);
@@ -313,6 +363,10 @@ public class Studive extends PApplet {
         gui.pageFlashCards.setCards();gui.pageFlashCards.setImages(gui.flashcardIcon);
     }
 
+    /**
+     * Carga las flashcards categorizadas como hechas y no hechas desde la base de datos.
+     * Asocia los datos cargados a los componentes gráficos correspondientes.
+     */
     public void loadStateOfCardPage(){
         gui.doneTests = db.getTotalOfStateOfTests(1);
         gui.DonePageCard = new PagedCard(5);

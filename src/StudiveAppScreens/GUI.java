@@ -8,19 +8,38 @@ import StudiveAppColors.Colors;
 import StudiveAppFonts.Fonts;
 import processing.core.PImage;
 
+/**
+ * Clase GUI encargada de gestionar toda la interfaz gráfica de la aplicación Studive.
+ *
+ * Administra los elementos visuales, pantallas, botones, campos de texto y el flujo de navegación entre ellas,
+ * proporcionando una experiencia interactiva para el usuario.
+ */
 public class GUI extends PApplet {
+
+    /** Enumeración de las diferentes pantallas de la aplicación. */
     public enum SCREENS {SIGNINPAGE, LOGINPAGE, HOMEPAGE, SUBJECTPAGE, ADDSUBJECT, CARDSPAGE, ADDCARD, DONELESSONS,
         NOTDONELESSONS, FLASHCARDTEST, FLASHCARDCREATION};
+
+    /** Estado actual de la pantalla */
     public SCREENS Default;
+    /** Botones de navegación y funcionalidad */
     ImageButtons home, foldermainbar, plus, doneLections, notDoneLections, subjectback, stateOfLessonBackButton,
-             flashCardBackButton, addTestTypeBackButton;
+            flashCardBackButton, addTestTypeBackButton;
     Button PreviousSubject, NextSubject, CardsNext, CardsPrev, addFile, create, add0File, stateOfLessonsNext,
             stateOfLessonsPrev, login, signIn, createTest, goToSignIn;
+
+    /** Imágenes e íconos */
     PImage homeIcon,homepressedIcon, homefolderIcon, homefolderpressedIcon, plusIcon, flashcardIcon,
             pluspressedIcon, mainfolderIcon, backIcon, backpressedIcon,  loginIcon;
+
+    /** Áreas de texto */
     TextArea titleTest,descriptionTest, subjecttitle, username,  password, newUsername, newPassword;
+
+    /** Tarjetas paginadas y materias */
     PagedCard HomePageCard, DonePageCard, NotDonePageCard, pageFlashCards;
     PagedSubject Subjects;
+
+    /** Colores, fuentes y datos */
     Colors colorss;
     Fonts fonts;
     String[][] subjectsInfo, doneTests, notDoneTests, flashcardsInfo;
@@ -29,6 +48,12 @@ public class GUI extends PApplet {
     String testId, flashCardId = "";
     String[] questions, answers;
     public boolean flashcardsInserted = false;
+
+    /**
+     * Constructor de la GUI que inicializa todos los componentes visuales.
+     * @param p5 Objeto principal de Processing.
+     * @param db Instancia de la base de datos.
+     */
 
     // ----------------------------------- * TABLE INFORMATION * ----------------------------------- //
     public GUI(PApplet p5, DataBase db){
@@ -57,10 +82,12 @@ public class GUI extends PApplet {
         fonts = new Fonts(p5);
     }
 
+    /** Inicializa el selector de colores. */
     public void setColorss(PApplet p5){
         colorss = new Colors(p5);
     }
 
+    /** Carga las imágenes usadas en la interfaz. */
     public void setImage(PApplet p5){
         homeIcon = p5.loadImage("data/home.png");
         homepressedIcon = p5.loadImage("data/homepressed.png");
@@ -75,6 +102,9 @@ public class GUI extends PApplet {
         loginIcon = p5.loadImage("data/foldermain.png");
     }
 
+    /**
+     * Dibuja la pantalla de inicio de sesión.
+     */
     // ----------------------------------- * LOGIN PAGE * ----------------------------------- //
     public void drawLoginPage(PApplet p5){
         p5.background(246,224,181);
@@ -94,6 +124,10 @@ public class GUI extends PApplet {
         goToSignIn.display(p5);
     }
 
+
+    /**
+     * Dibuja la pantalla de registro.
+     */
     public void drawSignInPage(PApplet p5){
         p5.background(246,224,181);
         p5.noFill();
@@ -109,6 +143,9 @@ public class GUI extends PApplet {
         signIn.display(p5);
     }
 
+    /**
+     * Inicializa los campos de texto y botones de la pantalla de login.
+     */
     public void setLoginAttributes(PApplet p5){
         newUsername = new TextArea(p5, 670, 540, 550,40,40,23);
         newPassword = new TextArea(p5, 670,630,550,40,40,23);
@@ -120,6 +157,10 @@ public class GUI extends PApplet {
     }
 
     // ----------------------------------- * HOME PAGE * ----------------------------------- //
+
+    /**
+     * Dibuja la página de inicio con acceso a flashcards recientes.
+     */
     public void drawHomePage(PApplet p5){
         p5.background(246,224,181);
         p5.textFont(fonts.getFirstFont());
@@ -135,6 +176,10 @@ public class GUI extends PApplet {
         drawmainBar(p5);
     }
     // ----------------------------------- COMPONENTS
+
+    /**
+     * Inicializa los atributos relacionados con la página de inicio.
+     */
     public void setHomePageAttributes(PApplet p5){
         doneLections = new ImageButtons(p5, mainfolderIcon, mainfolderIcon, 600, 350,180);
         notDoneLections = new ImageButtons(p5, mainfolderIcon, mainfolderIcon, 600, 720, 180);
@@ -146,6 +191,10 @@ public class GUI extends PApplet {
         HomePageCard.setImages(flashcardIcon);
     }
     // -------------------------------- * (NOT) DONE LESSONS * -------------------------------- //
+
+    /**
+     * Dibuja la página de lecciones hechas.
+     */
     public void drawDoneLessons(PApplet p5){
         p5.background(246,224,181);
         p5.textFont(fonts.getFirstFont());
@@ -158,6 +207,10 @@ public class GUI extends PApplet {
         stateOfLessonBackButton.display(p5);
         drawmainBar(p5);
     }
+
+    /**
+     * Dibuja la página de lecciones no hechas.
+     */
     public void drawNotDoneLessons(PApplet p5){
         p5.background(246,224,181);
         p5.textFont(fonts.getFirstFont());
@@ -171,6 +224,10 @@ public class GUI extends PApplet {
         drawmainBar(p5);
     }
     // ----------------------------------- COMPONENTS
+
+    /**
+     * Inicializa los atributos relacionados con la página de lecciones hechoas o no hechas.
+     */
     public void setStateOfLessonsPageButtons(){
         stateOfLessonsPrev = new Button(this, "PREV", IDwidth+350, 165, 60, 60);
         stateOfLessonsNext = new Button(this, "NEXT", IDwidth+350, 820, 60, 60);
@@ -192,6 +249,9 @@ public class GUI extends PApplet {
     }
 
     // ----------------------------------- * SUBJECT PAGE  * ----------------------------------- //
+    /**
+     * Dibuja la página de asignaturas.
+     */
     public void drawSubjectPage(PApplet p5){
         p5.background(246,224,181);
         p5.fill(0);
@@ -206,6 +266,9 @@ public class GUI extends PApplet {
         drawmainBar(p5);
     }
 
+    /**
+     * Dibuja la página de añadir asignaturas.
+     */
     public void drawAddSubject(PApplet p5){
         p5.background(246,224,181);
         p5.fill(255);
@@ -222,6 +285,9 @@ public class GUI extends PApplet {
     }
 
     // ----------------------------------- COMPONENTS
+    /**
+     * Inicializa los atributos relacionados con la página de asignaturas y crear asignaturas.
+     */
     public void setSubjectComponents(PApplet p5){
         Subjects = new PagedSubject(4);
         Subjects.setDimensions(535,160, RecentLecturewidth+300, 700);
@@ -242,6 +308,10 @@ public class GUI extends PApplet {
 
     // ---------------------------------- * DOCS AND TESTS * ---------------------------------- //
     // ----------------------------------- MAIN PAGE
+
+    /**
+     * Dibuja la página de flashcards.
+     */
     public void drawFlashcard(PApplet p5){
         p5.background(246,224,181);
         p5.textFont(fonts.getFirstFont());
@@ -262,6 +332,10 @@ public class GUI extends PApplet {
         drawmainBar(p5);
         flashCardBackButton.display(p5);
     }
+
+    /**
+     * Dibuja la página de añadir flashcards.
+     */
     public void drawAddCards(PApplet p5){
         p5.background(246,224,181);
         p5.fill(255);
@@ -277,6 +351,10 @@ public class GUI extends PApplet {
         addTestTypeBackButton.display(p5);
     }
     // ----------------------------------- COMPONENTS
+
+    /**
+     * Verifica si un arreglo bidimensional está vacío.
+     */
     public boolean EmptyOrNot(String[][] array){
         if (array == null) {
             return true;
@@ -292,6 +370,10 @@ public class GUI extends PApplet {
         }
         return true;
     }
+
+    /**
+     * Inicializa los atributos relacionados con la página de flashcards y añadir flashcards.
+     */
     public void setPageFlashCardsComponents(){
         addFile = new Button(this,"ADD FILE", 1350,300,150,50);
         add0File = new Button (this, "ADD FILE", 900,630,100,50);
@@ -306,30 +388,48 @@ public class GUI extends PApplet {
         addTestTypeBackButton = new ImageButtons(p5,backIcon,backpressedIcon,650,250,25);
     }
     // ---------------------------------- * FLASHCARDS PAGE * ---------------------------------- //
+
+    /**
+     * Dibuja la página de visualizar flashcards.
+     */
     public void drawFlashCardVisualizePage(PApplet p5){
         p5.background(246,224,181);
         p5.textFont(fonts.getSecondFont());
         visualizeFlashCardUI.display(p5);
     }
 
+    /**
+     * Dibuja la página de crear flashcards.
+     */
     public void drawFlashCardCreatePage(PApplet p5){
         p5.background(246,224,181);
         p5.textFont(fonts.getSecondFont());
         createFlashCardUI.display(p5);
     }
 
+    /**
+     * Inicializa los atributos relacionados con la página de crear o visualizar flashcards.
+     */
     public void setFlashCards(PApplet p5){
         createFlashCardUI = new FlashCard(p5, true);
         visualizeFlashCardUI = new FlashCard(p5,questions, answers);
     }
 
     // ------------------------------------ * OTHERS * ------------------------------------- //
+
+    /**
+     * Dibuja los botones de navegación.
+     */
     public void drawmainBar(PApplet p5){
         p5.fill(102,84,94);
         p5.rect(0,FullScreenheight-150,MainBarwidth,MainBarheight);
         home.display(p5);
         foldermainbar.display(p5);
     }
+
+    /**
+     * Inicializa los atributos relacionados con los botones de navegación.
+     */
     public void setMainBarButtons(PApplet p5){
         home = new ImageButtons(p5, homeIcon,homepressedIcon, 820,990,30);
         foldermainbar = new ImageButtons(p5, homefolderIcon,homefolderpressedIcon,1100, 990,30);
